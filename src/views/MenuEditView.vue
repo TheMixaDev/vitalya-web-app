@@ -13,6 +13,21 @@
         </div>
         <section class="content-section details">
             <div class="range-slider">
+                <div class="col-auto justify-center align-self-center" >
+                    <h4 class="h4" style="margin: 0;">Диета</h4>
+                </div>
+                <div style="padding-top: 0!important;" class="col-auto justify-center align-self-center">
+                    <select class="selection" v-model="diet">
+                        <option value="0">Без ограничений</option>
+                        <option value="1">Палео</option>
+                        <option value="2">Вегетарианская</option>
+                        <option value="3">Веганская</option>
+                        <option value="4">Кето</option>
+                        <!-- TODO: ask about values-->
+                    </select>
+                </div>
+            </div>
+            <div class="range-slider">
                 <div class="row justify-between">
                     <div class="col-auto justify-center align-self-center">
                         <span>Количество калорий</span>
@@ -24,10 +39,6 @@
                 <Slider v-bind="sliders.calories" v-model="sliders.calories.value" @update="calculateLimits"></Slider>
             </div>
             <h4 class="no_bottom_margin">Макронутриенты</h4>
-            <!--div class="tab">
-                <button class="tablinks" @click="selectedTab = 0">В граммах</button>
-                <button class="tablinks" @click="selectedTab = 1">% от калорий</button>
-            </div-->
             <div>
                 <div class="range-slider">
                     <div class="row justify-between">
@@ -40,7 +51,6 @@
                     </div><br>
                     <Slider v-bind="sliders.protein" v-model="sliders.protein.value"></Slider>
                 </div>
-
                 <div class="range-slider">
                     <div class="row justify-between">
                         <div class="col-auto justify-center align-self-center">
@@ -52,7 +62,6 @@
                     </div><br>
                     <Slider v-bind="sliders.fat" v-model="sliders.fat.value"></Slider>
                 </div>
-
                 <div class="range-slider">
                     <div class="row justify-between">
                         <div class="col-auto justify-center align-self-center">
@@ -65,66 +74,6 @@
                     <Slider v-bind="sliders.carbohydrates" v-model="sliders.carbohydrates.value"></Slider>
                 </div>
             </div>
-            <!--div class="tabcontent" v-if="selectedTab == 1">
-                <div class="row w-100 justify-center" style="gap: 1rem;">
-                    <div class="col-auto">
-                        <VChart style="width: 122px; height: 122px;" :option="chartOptions"></VChart>
-                    </div>
-                    <div class="col-auto">
-                        <div class="row">
-                            <div class="col-auto" style="margin-right: 0.8rem;">
-                                <span class="dot proteins"></span>
-                            </div>
-                            <div class="col-auto" style="margin-right: 0.8rem;">
-                                <div class="col-auto number-col">
-                                    <input class="input-number" value="30" type="number" /><span>% </span>
-                                </div>
-                                <div class="col-auto subtext-col">
-                                    <p class="subtext-small">~98г белков</p>
-                                </div>
-                            </div>
-
-                            <div class="col-auto">
-                                <span class="input-postfix">Белков</span>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-auto" style="margin-right: 0.8rem;">
-                                <span class="dot fats"></span>
-                            </div>
-                            <div class="col-auto">
-                                <div class="col-auto number-col" style="margin-right: 0.8rem;">
-                                    <input class="input-number" value="30" type="number" /><span>% </span>
-                                </div>
-                                <div class="col-auto subtext-col">
-                                    <p class="subtext-small">~44г жиров</p>
-                                </div>
-                            </div>
-
-                            <div class="col-auto">
-                                <span class="input-postfix">Жиров</span>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-auto" style="margin-right: 0.8rem;">
-                                <span class="dot carbohydrates"></span>
-                            </div>
-                            <div class="col-auto">
-                                <div class="col-auto number-col" style="margin-right: 0.8rem;">
-                                    <input class="input-number" value="30" type="number" /><span>% </span>
-                                </div>
-                                <div class="col-auto subtext-col">
-                                    <p class="subtext-small">~131г угл.</p>
-                                </div>
-                            </div>
-
-                            <div class="col-auto">
-                                <span class="input-postfix"> Углеводов</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div-->
             <h4 class="no_bottom_margin">Микронутриенты</h4>
             <div class="range-slider">
                 <div class="row justify-between">
@@ -137,8 +86,26 @@
                 </div><br>
                 <Slider v-bind="sliders.minCellulose" v-model="sliders.minCellulose.value"></Slider>
             </div>
+            <meals>
+                <h4 class="no_bottom_margin">Приемы пищи</h4>
+                <div class="container container-content range-slider" v-for="(mealtime, index) in userParams.eatingsParams?.filter(m => !m.removed)" :key="index">
+                    <div class="row card-body justify-around">
+                        <div class="col-auto">
+                            <h4 class="car-heading">{{ mealtime.name }}</h4>
+                        </div>
+                        <div class="col-auto text-col justify-center align-items-center align-self-center">
+                            <a class="btn_small" @click="editEating(mealtime)">Редактировать</a>
+                        </div>
+                        <div class="col-auto text-col justify-center align-items-center align-self-center">
+                            <a class="btn_small" @click="deleteEating(mealtime)" v-if="index > 0">Удалить</a>
+                        </div>
+                    </div>
+                </div>
+            </meals>
+            <div class="row footer">
+                <a class="btn" @click="addEating">Добавить прием пищи</a>
+            </div>
         </section>
-        <!-- TODO meals managment -->
     </section>
 </template>
 
@@ -192,7 +159,8 @@ export default {
                     format: v => `${FrontendService.round(v)}г`
                 }
             },
-            loadedEarly: {}
+            userParams: {},
+            diet: 0
         }
     },
     methods: {
@@ -203,7 +171,8 @@ export default {
         },
         loadParams() {
             UserService.getParams(this.$cookies, data => {
-                this.loadedEarly = data;
+                this.userParams = data;
+                this.diet = data.diet;
                 this.sliders.calories.value = data.calories;
                 this.calculateLimits();
                 this.sliders.protein.value = [data.params.minProtein, data.params.maxProtein];
@@ -217,24 +186,69 @@ export default {
         },
         saveParams() {
             // TODO add diet type change
-            this.loadedEarly.calories = this.sliders.calories.value;
-            this.loadedEarly.params.calories = this.sliders.calories.value;
-            this.loadedEarly.params.minProtein = this.sliders.protein.value[0];
-            this.loadedEarly.params.maxProtein = this.sliders.protein.value[1];
-            this.loadedEarly.params.minFat = this.sliders.fat.value[0];
-            this.loadedEarly.params.maxFat = this.sliders.fat.value[1];
-            this.loadedEarly.params.minCarbohydrates = this.sliders.carbohydrates.value[0];
-            this.loadedEarly.params.maxCarbohydrates = this.sliders.carbohydrates.value[1];
-            this.loadedEarly.params.minCellulose = this.sliders.minCellulose.value;
-            // TODO add eating params change
-            UserService.setParams(this.$cookies, this.loadedEarly,
+            this.userParams.diet = this.diet;
+            this.userParams.calories = this.sliders.calories.value;
+            this.userParams.params.calories = this.sliders.calories.value;
+            this.userParams.params.minProtein = this.sliders.protein.value[0];
+            this.userParams.params.maxProtein = this.sliders.protein.value[1];
+            this.userParams.params.minFat = this.sliders.fat.value[0];
+            this.userParams.params.maxFat = this.sliders.fat.value[1];
+            this.userParams.params.minCarbohydrates = this.sliders.carbohydrates.value[0];
+            this.userParams.params.maxCarbohydrates = this.sliders.carbohydrates.value[1];
+            this.userParams.params.minCellulose = this.sliders.minCellulose.value;
+            UserService.setParams(this.$cookies, this.userParams,
                 () => FrontendService.notifySuccess(this.$notify, "Параметры сохранены"),
                 () => FrontendService.notifyError(this.$notify, "Не удалось сохранить параметры")
             );
+        },
+        editEating(mealtime) {
+            for(let index in this.userParams.eatingsParams) {
+                if(this.userParams.eatingsParams[index].name == mealtime.name) {
+                    FrontendService.setMoveData({
+                        saveFlag: true,
+                        save: {
+                            sliders: this.sliders,
+                            userParams: this.userParams
+                        },
+                        eating: this.userParams.eatingsParams[index],
+                    });
+                    this.$router.push({name: 'MealtimeEdit'});
+                    return;
+                }
+            }
+            FrontendService.notifyError(this.$notify, "Не удалось отредактировать прием пищи, попробуйте позже");
+        },
+        deleteEating(mealtime) {
+            for(let index in this.userParams.eatingsParams) {
+                if(this.userParams.eatingsParams[index].name == mealtime.name) {
+                    this.userParams.eatingsParams[index].removed = true;
+                    return;
+                }
+            }
+            FrontendService.notifyError(this.$notify, "Не удалось удалить прием пищи, попробуйте позже");
+        },
+        addEating() {
+            
         }
     },
     mounted() {
-        this.loadParams();
+        let moveData = FrontendService.getMoveData();
+        if(!moveData || !moveData.saveFlagAccepted)
+            this.loadParams();
+        else {
+            this.sliders = moveData.save.sliders;
+            this.userParams = moveData.save.userParams;
+            if(moveData.updated) {
+                for(let index in this.userParams.eatingsParams) {
+                    if(this.userParams.eatingsParams[index].name == moveData.updated.name) {
+                        this.userParams.eatingsParams[index] = moveData.updated;
+                        FrontendService.notifySuccess(this.$notify, "Данные о приеме пищи обновлены");
+                        return;
+                    }
+                }
+                FrontendService.notifyError(this.$notify, "Не удалось сохранить прием пищи, попробуйте позже");
+            }
+        }
     }
 }
 </script>

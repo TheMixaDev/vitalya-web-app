@@ -11,7 +11,7 @@
                     <p class="small-subtext">Белки {{ Math.round(totalMicronutrients.protein) }}г, Жиры {{ Math.round(totalMicronutrients.fat) }}г, Углеводы {{ Math.round(totalMicronutrients.carbohydrates) }}г</p>
                 </div>
                 <div class="col-auto justify-center align-content-center align-self-center align-items-center">
-                    <a @click="goToDetails"><img class="arrow-left" src="assets/img/arrow-right.svg" alt="Arrow left icon" /></a>
+                    <RouterLink to="/menu_details"><img class="arrow-left" src="assets/img/arrow-right.svg" alt="Arrow left icon" /></RouterLink>
                 </div>
             </div>
         </div>
@@ -20,8 +20,7 @@
             <section v-for="(menuItem, index) in menu" :key="index">
                 <div class="dropdown-content" style="display: none" :id="'dropdown'+menuItem.name">
                     <a @click="regenerateSubmenu(menuItem)" class="flex justify-between"> Перегенерировать {{ menuItem.name }} <img src="assets/img/refresh.svg" alt="Refresh icon" /> </a>
-                    <!--TODO proper linking -->
-                    <a @click="goToDetails" class="flex justify-between">Настроить {{ menuItem.name }} <img src="assets/img/settings.svg" alt="Settings icon" /></a>
+                    <RouterLink to="/menu_edit" class="flex justify-between">Настроить {{ menuItem.name }} <img src="assets/img/settings.svg" alt="Settings icon" /></RouterLink>
                 </div>
                 <div class="row container-header justify-center align-items-around align-self-center">
                     <div class="col">
@@ -32,12 +31,12 @@
                     </div>
                 </div>
                 <div class="container container-content">
-                    <div class="row card-body justify-around" v-for="dish in menuItem.dishes" :key="dish.id">
+                    <div class="row card-body justify-around" v-for="(dish, index) in menuItem.dishes" :key="index" @click="getReceipt(dish)">
                         <div class="col-auto">
                             <img class="food-photo" :src="dish.logo" alt="Food photo" />
                         </div>
                         <div class="col-auto text-col justify-center align-items-center align-self-center">
-                            <a @click="getReceipt(dish)"><h4 class="card-heading">{{ dish.name }}</h4></a>
+                            <a><h4 class="card-heading">{{ dish.name }}</h4></a>
                             <span class="orange-text">{{ Math.round(dish.weight) }}г, {{ Math.round(dish.calories) }} кал</span>
                         </div>
                         <div class="col-auto"></div>
@@ -104,6 +103,13 @@ export default {
     methods: {
         calculateMicronutrients() {
             // TODO rewrite on idealParams
+            this.totalMicronutrients = {
+                calories: 0,
+                protein: 0,
+                fat: 0,
+                carbohydrates: 0,
+                cellulose: 0
+            };
             for(let i of this.menu) {
                 let micronutrients = i.micronutrients;
                 for(let j in micronutrients) {
@@ -180,7 +186,7 @@ export default {
                 delete params["calories"];
                 delete params["isMacronutrientsParamsSet"];
                 params.exludeDishes = menuItem.dishes.map(dish => dish.id);
-                AlgorithmService.calculateSubmenu(this.$cookies, params, data => {
+                AlgorithmService.calculateCustom(this.$cookies, params, data => {
                     this.menu = data.eatings;
                     this.calculateMicronutrients();
                     FrontendService.notifySuccess(this.$notify, "Меню перегенерировано");
