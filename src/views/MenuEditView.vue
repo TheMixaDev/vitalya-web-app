@@ -12,21 +12,23 @@
             </div>
         </div>
         <section class="content-section details">
-            <div class="row w-100 justify-center calories">
-                <div class="col-auto">
-                    <label>Количество калорий</label>
-                </div>
-                <div class="col-auto number-col">
-                    <input class="input-number" v-model="validatedCalories" type="number" />
-                    <span class="input-postfix">кал</span>
-                </div>
+            <div class="range-slider">
+                <div class="row justify-between">
+                    <div class="col-auto justify-center align-self-center">
+                        <span>Количество калорий</span>
+                    </div>
+                    <div class="col-auto justify-center">
+                        <p>{{ sliders.calories.min }}г - {{ sliders.calories.max }}г</p>
+                    </div>
+                </div><br>
+                <Slider v-bind="sliders.calories" v-model="sliders.calories.value" @update="calculateLimits"></Slider>
             </div>
-            <h4>Макронутриенты</h4>
+            <h4 class="no_bottom_margin">Макронутриенты</h4>
             <!--div class="tab">
                 <button class="tablinks" @click="selectedTab = 0">В граммах</button>
                 <button class="tablinks" @click="selectedTab = 1">% от калорий</button>
             </div-->
-            <div class="tabcontent">
+            <div>
                 <div class="range-slider">
                     <div class="row justify-between">
                         <div class="col-auto justify-center align-self-center">
@@ -123,17 +125,17 @@
                     </div>
                 </div>
             </div-->
-            <div class="row w-100 justify-between align-content-center align-self-center align-items-center">
-                <h4>Микронутриенты</h4>
-                <div class="row w-100 justify-center calories">
-                    <div class="col-auto">
-                        <label>Мин. клетчатки</label>
+            <h4 class="no_bottom_margin">Микронутриенты</h4>
+            <div class="range-slider">
+                <div class="row justify-between">
+                    <div class="col-auto justify-center align-self-center">
+                        <span>Мин. клетчатки</span>
                     </div>
-                    <div class="col-auto number-col">
-                        <input class="input-number" value="30" type="number" />
-                        <span class="input-postfix">г</span>
+                    <div class="col-auto justify-center">
+                        <p>{{ sliders.minCellulose.min }}г - {{ sliders.minCellulose.max }}г</p>
                     </div>
-                </div>
+                </div><br>
+                <Slider v-bind="sliders.minCellulose" v-model="sliders.minCellulose.value"></Slider>
             </div>
         </section>
         <!-- TODO meals managment -->
@@ -150,20 +152,6 @@ export default {
     name: 'MenuEditView',
     components: {
         Slider
-    },
-    computed: {
-        validatedCalories: {
-            get() {
-                return this.calories;
-            },
-            set(value) {
-                const number = parseFloat(value);
-                if (!isNaN(number) && number >= 200 && number <= 2000) {
-                    this.calories = value;
-                }
-                else this.calories = this.validatedCalories;
-            },
-        },
     },
     data() {
         return {
@@ -188,43 +176,61 @@ export default {
                     step: 0.1,
                     value: [0, 100],
                     format: v => `${FrontendService.round(v)}г`
+                },
+                calories: {
+                    min: 200,
+                    max: 2000,
+                    step: 0.1,
+                    value: 0,
+                    format: v => `${FrontendService.round(v)}кал`
+                },
+                minCellulose: {
+                    min: 25,
+                    max: 50,
+                    step: 0.1,
+                    value: 0,
+                    format: v => `${FrontendService.round(v)}г`
                 }
             },
-            calories: 1000,
-            minCellulose: 25,
             loadedEarly: {}
         }
     },
     methods: {
         calculateLimits() {
-            this.sliders.protein.max = FrontendService.round(this.calories / 4)*1;
-            this.sliders.fat.max = FrontendService.round(this.calories / 9)*1;
-            this.sliders.carbohydrates.max = FrontendService.round(this.calories / 4)*1;
+            this.sliders.protein.max = FrontendService.round(this.sliders.calories.value / 4)*1;
+            this.sliders.fat.max = FrontendService.round(this.sliders.calories.value / 9)*1;
+            this.sliders.carbohydrates.max = FrontendService.round(this.sliders.calories.value / 4)*1;
         },
         loadParams() {
             UserService.getParams(this.$cookies, data => {
                 this.loadedEarly = data;
-                this.calories = data.calories;
+                this.sliders.calories.value = data.calories;
                 this.calculateLimits();
                 this.sliders.protein.value = [data.params.minProtein, data.params.maxProtein];
                 this.sliders.fat.value = [data.params.minFat, data.params.maxFat];
                 this.sliders.carbohydrates.value = [data.params.minCarbohydrates, data.params.maxCarbohydrates];
-                this.minCellulose = data.params.minCellulose;
-            }, () => this.$router.push({name: 'EmptyMenu'}))
+                this.sliders.minCellulose.value = data.params.minCellulose;
+            }, () => {
+                FrontendService.notifyError(this.$notify, "Не удалось получить параметры пользователя, попробуйте позже");
+                this.$router.push({name: 'EmptyMenu'})
+            })
         },
         saveParams() {
             // TODO add diet type change
-            this.loadedEarly.calories = this.calories;
-            this.loadedEarly.params.calories = this.calories;
+            this.loadedEarly.calories = this.sliders.calories.value;
+            this.loadedEarly.params.calories = this.sliders.calories.value;
             this.loadedEarly.params.minProtein = this.sliders.protein.value[0];
             this.loadedEarly.params.maxProtein = this.sliders.protein.value[1];
             this.loadedEarly.params.minFat = this.sliders.fat.value[0];
             this.loadedEarly.params.maxFat = this.sliders.fat.value[1];
             this.loadedEarly.params.minCarbohydrates = this.sliders.carbohydrates.value[0];
             this.loadedEarly.params.maxCarbohydrates = this.sliders.carbohydrates.value[1];
-            this.loadedEarly.params.minCellulose = this.minCellulose;
+            this.loadedEarly.params.minCellulose = this.sliders.minCellulose.value;
             // TODO add eating params change
-            // TODO after server CORS fix
+            UserService.setParams(this.$cookies, this.loadedEarly,
+                () => FrontendService.notifySuccess(this.$notify, "Параметры сохранены"),
+                () => FrontendService.notifyError(this.$notify, "Не удалось сохранить параметры")
+            );
         }
     },
     mounted() {
@@ -232,3 +238,9 @@ export default {
     }
 }
 </script>
+
+<style>
+.no_bottom_margin {
+    margin-bottom: 0;
+}
+</style>

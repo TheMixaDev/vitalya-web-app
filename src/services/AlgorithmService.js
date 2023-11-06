@@ -1,3 +1,4 @@
+import { FrontendService } from "./FrontendService";
 import { NetworkService } from "./NetworkService";
 
 export const AlgorithmService = {
@@ -197,8 +198,9 @@ export const AlgorithmService = {
                 "maxCellulose": 50.0
             }
         });
-        NetworkService.POSTAuth(`/menu/calculate`, {}, cookies, data => {
-            success(data);
-        }, fail);
+        NetworkService.POSTAuth(`/menu/calculate`, {}, cookies, data => FrontendService.getDataFromResponse(data, success), fail);
+    },
+    calculateCustom(cookies, data, success, fail) {
+        NetworkService.POSTAuth(`/menu/custom`, data, cookies, data => FrontendService.getDataFromResponse(data, success), fail);
     }
 }

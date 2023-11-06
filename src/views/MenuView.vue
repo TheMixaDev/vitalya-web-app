@@ -17,11 +17,10 @@
         </div>
         <div class="row overlay-top w-100"></div>
         <section class="content-section" style="position: relative" @scroll="closeDropdowns">
-            <section v-for="menuItem in menu" :key="menuItem.name">
+            <section v-for="(menuItem, index) in menu" :key="index">
                 <div class="dropdown-content" style="display: none" :id="'dropdown'+menuItem.name">
-                    <a href="#" class="flex justify-between">
-                        Перегенерировать {{ menuItem.name }} <img src="assets/img/refresh.svg" alt="Refresh icon" /> </a>
-                    <!--TODO PROPER LINKING-->
+                    <a @click="regenerateSubmenu(menuItem)" class="flex justify-between"> Перегенерировать {{ menuItem.name }} <img src="assets/img/refresh.svg" alt="Refresh icon" /> </a>
+                    <!--TODO proper linking -->
                     <a @click="goToDetails" class="flex justify-between">Настроить {{ menuItem.name }} <img src="assets/img/settings.svg" alt="Settings icon" /></a>
                 </div>
                 <div class="row container-header justify-center align-items-around align-self-center">
@@ -41,10 +40,7 @@
                             <a @click="getReceipt(dish)"><h4 class="card-heading">{{ dish.name }}</h4></a>
                             <span class="orange-text">{{ Math.round(dish.weight) }}г, {{ Math.round(dish.calories) }} кал</span>
                         </div>
-                        <div class="col-auto">
-                            <!-- TODO refresh -->
-                            <!--a href="#"><img class="dots-img low-opacity" src="assets/img/refresh.svg" alt="Refresh menu icon" /></a-->
-                        </div>
+                        <div class="col-auto"></div>
                     </div>
                 </div>
             </section>
@@ -159,20 +155,37 @@ export default {
         loadMenu() {
             UserService.getCache(this.$cookies, data => {
                 if(!data || data.length == 0)
-                    this.$router.push({name: 'EmptyMenu'})
+                    this.searchFailed();
                 else {
                     this.menu = data;
                     this.calculateMicronutrients();
                 }
-            }, () => this.$router.push({name: 'EmptyMenu'}));
+            }, this.searchFailed);
+        },
+        searchFailed() {
+            FrontendService.notifyError(this.$notify, "Меню не найдено");
+            this.$router.push({name: 'EmptyMenu'});
         },
         regenerateMenu() {
-            AlgorithmService.calculateMenu(this.$cookies, () => {
-                window.location.reload();
-                // TODO: Soft update
-            }, () => {
-                // TODO: Handle error
-            });
+            AlgorithmService.calculateMenu(this.$cookies, data => {
+                this.menu = data.eatings;
+                this.calculateMicronutrients();
+                FrontendService.notifySuccess(this.$notify, "Меню перегенерировано");
+            }, () => FrontendService.notifyError(this.$notify, "Не удалось сгенерировать меню, попробуйте позже"));
+        },
+        regenerateSubmenu(menuItem) {
+            UserService.getParams(this.$cookies, params => {
+                params.eatingsParams = params.eatings;
+                params.params = params.idealMicronutrients;
+                delete params["calories"];
+                delete params["isMacronutrientsParamsSet"];
+                params.exludeDishes = menuItem.dishes.map(dish => dish.id);
+                AlgorithmService.calculateSubmenu(this.$cookies, params, data => {
+                    this.menu = data.eatings;
+                    this.calculateMicronutrients();
+                    FrontendService.notifySuccess(this.$notify, "Меню перегенерировано");
+                }, () => FrontendService.notifyError(this.$notify, "Не удалось сгенерировать меню, попробуйте позже"));
+            }, () => FrontendService.notifyError(this.$notify, "Не удалось получить параметры пользователя, попробуйте позже"));
         },
         goToDetails() {
             this.$router.push({name: 'MenuDetails'})

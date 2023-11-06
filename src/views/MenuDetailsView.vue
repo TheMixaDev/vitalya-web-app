@@ -150,19 +150,23 @@ export default {
         loadMenu() {
             UserService.getCache(this.$cookies, data => {
                 if(!data || data.length == 0)
-                    this.$router.push({name: 'EmptyMenu'})
+                    this.searchFailed();
                 else {
                     this.menu = data;
                     this.loadTargets();
                 }
-            }, () => this.$router.push({name: 'EmptyMenu'}));
+            }, this.searchFailed);
         },
         loadTargets() {
             // TODO rewrite on ideal params
             UserService.getParams(this.$cookies, data => {
                 this.targets = data.params;
                 this.calculateMicronutrients();
-            }, () => this.$router.push({name: 'EmptyMenu'}))
+            }, this.searchFailed)
+        },
+        searchFailed() {
+            FrontendService.notifyError(this.$notify, "Меню не найдено");
+            this.$router.push({name: 'EmptyMenu'});
         }
     },
     mounted() {

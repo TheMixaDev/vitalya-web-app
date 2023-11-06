@@ -17,5 +17,23 @@ export const FrontendService = {
         if(hours < 1) return minutes+" минут";
         if(minutes < 1) return hours+" часов";
         return hours+" часов "+minutes+" минут";
+    },
+    notify(notifier, type, title, message) {
+        notifier({
+            title: title,
+            text: message,
+            type: type
+        });
+    },
+    notifySuccess(notifier, message) {
+        this.notify(notifier, "success", "Успешно", message);
+    },
+    notifyError(notifier, message) {
+        this.notify(notifier, "error", "Ошибка", message);
+    },
+    getDataFromResponse(response, callback) {
+        if(response.data)
+            callback(response.data);
+        else callback(response);
     }
 }
