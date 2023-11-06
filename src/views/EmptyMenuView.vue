@@ -17,29 +17,7 @@
 </template>
 
 <script>
-import { UserService } from '../services/UserService'
-import { FrontendService } from '../services/FrontendService'
-
 export default {
-    name: 'EmptyMenuView',
-    methods: {
-        autoLoadMenu() {
-            UserService.getCache(this.$cookies, data => {
-                if(data && data.length > 0) {
-                    FrontendService.setMoveData({menu: data});
-                    this.$router.push({name: 'Menu'})
-                }
-            }, () => {});
-        }
-    },
-    mounted() {
-        try {
-            if(!this.$route.query.tg && !this.$cookies.get('tg'))
-                this.$router.push({name: 'NotAuthorized'})
-            UserService.authorize(this.$cookies, this.$route.query.tg ? this.$route.query.tg : this.$cookies.get('tg'), this.autoLoadMenu, window.close);
-        } catch {
-            this.$router.push({name: 'NotAuthorized'})
-        }
-    }
+    name: 'EmptyMenuView'
 }
 </script>

@@ -5,7 +5,7 @@
         </div>
 
         <div class="container">
-            <img class="cal-img" src="assets/img/cal.svg" alt="Calendar icon"/>
+            <img class="cal-img" src="favicon.ico" alt="Icon"/>
             <h1 class="h1">Не удалось авторизоваться</h1>
             <p class="subtext">Не удалось авторизовать вас в системе. Попробуйте перезапустить приложение</p>
         </div>
@@ -15,6 +15,6 @@
 
 <script>
 export default {
-    name: 'NotAuthorizedView',
+    name: 'NotAuthorizedView'
 }
 </script>

@@ -5,6 +5,11 @@ const router = createRouter({
   routes: [
     {
       path: '/',
+      name: 'Root',
+      component: () => import('../views/RootView.vue')
+    },
+    {
+      path: '/empty_menu',
       name: 'EmptyMenu',
       component: () => import('../views/EmptyMenuView.vue')
     },
@@ -37,6 +42,12 @@ const router = createRouter({
       path: '/not_authorized',
       name: 'NotAuthorized',
       component: () => import('../views/NotAuthorizedView.vue')
+    }
+    ,
+    {
+      path: '/user',
+      name: 'User',
+      component: () => import('../views/UserView.vue')
     }
   ]
 })

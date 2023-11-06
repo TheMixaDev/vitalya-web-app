@@ -130,7 +130,6 @@ export default {
     },
     methods: {
         calculateMicronutrients() {
-            // TODO rewrite on idealParams
             for(let i of this.menu) {
                 let micronutrients = i.micronutrients;
                 for(let j in micronutrients) {
@@ -158,7 +157,6 @@ export default {
             }, this.searchFailed);
         },
         loadTargets() {
-            // TODO rewrite on ideal params
             UserService.getParams(this.$cookies, data => {
                 this.targets = data.params;
                 this.calculateMicronutrients();
@@ -166,7 +164,7 @@ export default {
         },
         searchFailed() {
             FrontendService.notifyError(this.$notify, "Меню не найдено");
-            this.$router.push({name: 'EmptyMenu'});
+            this.$router.push({name: 'Root'});
         }
     },
     mounted() {

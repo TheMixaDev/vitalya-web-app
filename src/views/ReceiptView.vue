@@ -45,12 +45,12 @@
                         <span class="quantity-item">{ingridient_measure}</span>
                     </div>
                 </div>
-                <div class="row w-100">
+                <!--div class="row w-100">
                     <h4 style="padding: 0; margin-bottom: 0; text-align: left; width: 100%;">Шаги приготовления</h4>
                 </div>
                 <div class="row w-100">
                     <ul class="ul">
-                        <li class="col-auto"> <!-- TODO v-for -->
+                        <li class="col-auto">
                             <span class="step">
                                 Шаг {step_number}
                             </span>
@@ -64,7 +64,7 @@
                             </span>
                         </li>
                     </ul>
-                </div>
+                </div-->
             </div>
         </section>
     </section>
@@ -153,7 +153,6 @@ export default {
         if(!moveData) return this.$router.go(-1);
         this.dish = moveData.dish;
         this.showMicronutrients();
-        // TODO show recipe
     }
 }
 </script>

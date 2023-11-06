@@ -102,7 +102,6 @@ export default {
     },
     methods: {
         calculateMicronutrients() {
-            // TODO rewrite on idealParams
             this.totalMicronutrients = {
                 calories: 0,
                 protein: 0,
@@ -161,36 +160,80 @@ export default {
         loadMenu() {
             UserService.getCache(this.$cookies, data => {
                 if(!data || data.length == 0)
-                    this.searchFailed();
+                    this.regenerateMenu();
                 else {
                     this.menu = data;
                     this.calculateMicronutrients();
                 }
-            }, this.searchFailed);
+            }, this.regenerateMenu);
         },
         searchFailed() {
             FrontendService.notifyError(this.$notify, "Меню не найдено");
-            this.$router.push({name: 'EmptyMenu'});
+            this.$router.push({name: 'Root'});
         },
         regenerateMenu() {
-            AlgorithmService.calculateMenu(this.$cookies, data => {
-                this.menu = data.eatings;
-                this.calculateMicronutrients();
-                FrontendService.notifySuccess(this.$notify, "Меню перегенерировано");
-            }, () => FrontendService.notifyError(this.$notify, "Не удалось сгенерировать меню, попробуйте позже"));
+            UserService.getParams(this.$cookies, () => {
+                AlgorithmService.calculateMenu(this.$cookies, data => {
+                    this.menu = data.eatings;
+                    this.calculateMicronutrients();
+                    FrontendService.notifySuccess(this.$notify, "Меню перегенерировано");
+                }, () => FrontendService.notifyError(this.$notify, "Не удалось сгенерировать меню по указанным параметрам"));
+            }, err => {
+                if(err.response.status == 404) {
+                    UserService.setParams(this.$cookies,
+                    {
+                        "diet": 1,
+                        "calories": 2000,
+                        "isMacronutrientsParamsSet": true,
+                        "params": {
+                                "calories": 2000,
+                                "minProtein": 2000 / 7 * 0.9 / 4,
+                                "maxProtein": 2000 / 7 * 1.1 / 4,
+                                "minFat": 2000 / 7 * 0.9 / 9,
+                                "maxFat": 2000 / 7 * 1.1 / 9,
+                                "minCarbohydrates": 2000 / 7 * 0.9 / 4,
+                                "maxCarbohydrates": 2000 / 7 * 1.1 / 4,
+                                "minCellulose": 25,
+                                "maxCellulose": 999
+                        },
+                        "eatingsParams": [
+                            {
+                                "name": "Завтрак",
+                                "size": 0.4,
+                                "type": 1,
+                                "difficulty": 0, // TODO: REPLACE: Diff на стандартное
+                                "dishCount": 2
+                            },
+                            {
+                                "name": "Обед",
+                                "size": 0.4,
+                                "type": 2,
+                                "difficulty": 0, // TODO: REPLACE: Diff на стандартное
+                                "dishCount": 0
+                            }
+                        ]
+                    }, () => {
+                        window.location.reload();
+                    }, () => FrontendService.notifyError(this.$notify, "Не удалось установить параметры пользователя. Сообщите о проблеме администраторам."));
+                } else FrontendService.notifyError(this.$notify, "Не удалось установить параметры пользователя. Сообщите о проблеме администраторам.");
+            });
         },
         regenerateSubmenu(menuItem) {
             UserService.getParams(this.$cookies, params => {
-                params.eatingsParams = params.eatings;
-                params.params = params.idealMicronutrients;
+                params.eatings = params.eatingsParams;
+                params.idealMicronutrients = params.params;
                 delete params["calories"];
                 delete params["isMacronutrientsParamsSet"];
-                params.exludeDishes = menuItem.dishes.map(dish => dish.id);
+                delete params["eatingsParams"];
+                delete params["params"];
+                params.excludeDishes = menuItem.dishes.map(dish => dish.id);
+                for(let i in params.eatings)
+                    params.eatings[i].type = params.eatings[i].type.id;
                 AlgorithmService.calculateCustom(this.$cookies, params, data => {
                     this.menu = data.eatings;
                     this.calculateMicronutrients();
                     FrontendService.notifySuccess(this.$notify, "Меню перегенерировано");
-                }, () => FrontendService.notifyError(this.$notify, "Не удалось сгенерировать меню, попробуйте позже"));
+                }, () => FrontendService.notifyError(this.$notify, "Не удалось сгенерировать меню по указанным параметрам"));
             }, () => FrontendService.notifyError(this.$notify, "Не удалось получить параметры пользователя, попробуйте позже"));
         },
         goToDetails() {
@@ -203,11 +246,9 @@ export default {
     },
     mounted() {
         let moveData = FrontendService.getMoveData();
-        if(!moveData) this.loadMenu();
-        else {
-            this.menu = moveData.menu;
-            this.calculateMicronutrients();
-        }
+        if(!moveData) return this.loadMenu();
+        this.menu = moveData.menu;
+        this.calculateMicronutrients();
     }
 }
 </script>

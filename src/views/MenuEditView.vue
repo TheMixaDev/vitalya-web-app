@@ -17,13 +17,12 @@
                     <h4 class="h4" style="margin: 0;">Диета</h4>
                 </div>
                 <div style="padding-top: 0!important;" class="col-auto justify-center align-self-center">
-                    <select class="selection" v-model="diet">
+                    <select class="selection" v-model="userParams.diet">
                         <option value="0">Без ограничений</option>
                         <option value="1">Палео</option>
                         <option value="2">Вегетарианская</option>
                         <option value="3">Веганская</option>
                         <option value="4">Кето</option>
-                        <!-- TODO: ask about values-->
                     </select>
                 </div>
             </div>
@@ -159,8 +158,9 @@ export default {
                     format: v => `${FrontendService.round(v)}г`
                 }
             },
-            userParams: {},
-            diet: 0
+            userParams: {
+                diet: 0
+            }
         }
     },
     methods: {
@@ -172,7 +172,6 @@ export default {
         loadParams() {
             UserService.getParams(this.$cookies, data => {
                 this.userParams = data;
-                this.diet = data.diet;
                 this.sliders.calories.value = data.calories;
                 this.calculateLimits();
                 this.sliders.protein.value = [data.params.minProtein, data.params.maxProtein];
@@ -181,12 +180,10 @@ export default {
                 this.sliders.minCellulose.value = data.params.minCellulose;
             }, () => {
                 FrontendService.notifyError(this.$notify, "Не удалось получить параметры пользователя, попробуйте позже");
-                this.$router.push({name: 'EmptyMenu'})
+                this.$router.push({name: 'Root'})
             })
         },
         saveParams() {
-            // TODO add diet type change
-            this.userParams.diet = this.diet;
             this.userParams.calories = this.sliders.calories.value;
             this.userParams.params.calories = this.sliders.calories.value;
             this.userParams.params.minProtein = this.sliders.protein.value[0];
@@ -196,6 +193,8 @@ export default {
             this.userParams.params.minCarbohydrates = this.sliders.carbohydrates.value[0];
             this.userParams.params.maxCarbohydrates = this.sliders.carbohydrates.value[1];
             this.userParams.params.minCellulose = this.sliders.minCellulose.value;
+            this.userParams.eatingsParams = this.userParams.eatingsParams.filter(e => !e.removed);
+            this.userParams.eatingsParams.forEach(e => e.type?.id ? e.type = e.type.id : '');
             UserService.setParams(this.$cookies, this.userParams,
                 () => FrontendService.notifySuccess(this.$notify, "Параметры сохранены"),
                 () => FrontendService.notifyError(this.$notify, "Не удалось сохранить параметры")
@@ -203,7 +202,7 @@ export default {
         },
         editEating(mealtime) {
             for(let index in this.userParams.eatingsParams) {
-                if(this.userParams.eatingsParams[index].name == mealtime.name) {
+                if(this.userParams.eatingsParams[index].name == mealtime.name && !this.userParams.eatingsParams[index].removed) {
                     FrontendService.setMoveData({
                         saveFlag: true,
                         save: {
@@ -222,13 +221,48 @@ export default {
             for(let index in this.userParams.eatingsParams) {
                 if(this.userParams.eatingsParams[index].name == mealtime.name) {
                     this.userParams.eatingsParams[index].removed = true;
+                    if(this.userParams.eatingsParams[index].name.includes("Перекус")) {
+                        let count = 1;
+                        this.userParams.eatingsParams.filter(e => !e.removed && e.name.includes("Перекус")).forEach(e => {
+                            e.name = "Перекус №"+count;
+                            count++;
+                        });
+                    }
                     return;
                 }
             }
             FrontendService.notifyError(this.$notify, "Не удалось удалить прием пищи, попробуйте позже");
         },
         addEating() {
-            
+            let data = JSON.parse(JSON.stringify(this.userParams.eatingsParams.filter(e => !e.removed).map(e => e.name)));
+            if(data.length > 8) {
+                FrontendService.notifyError(this.$notify, "Количество приемов пищи слишком велико");
+                return;
+            }
+            if(!data.includes("Ужин")) {
+                this.userParams.eatingsParams.push({
+                    "name": "Ужин",
+                    "size": 0.4,
+                    "type": {
+                        "id": 1,
+                        "name": "DishType1" // TODO: REPLACE: Type на ужин
+                    },
+                    "difficulty": 0, // TODO: REPLACE: Diff на стандартное
+                    "dishCount": 2
+                });
+            } else {
+                this.userParams.eatingsParams.push({
+                    "name": "Перекус №"+(this.userParams.eatingsParams.filter(e => e.name.includes("Перекус") && !e.removed).length+1),
+                    "size": 0.2,
+                    "type": {
+                        "id": 1,
+                        "name": "DishType1" // TODO: REPLACE: Type на любой
+                    },
+                    "difficulty": 0, // TODO: REPLACE: Diff на просто
+                    "dishCount": 1
+                });
+            }
+            FrontendService.notifySuccess(this.$notify, "Прием пищи добавлен");
         }
     },
     mounted() {

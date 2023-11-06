@@ -14,7 +14,7 @@ export const NetworkService = {
             let response = await axios.post(`${configuration.serverUrl}${url}`, data).catch(fail);
             if(response)
                 success(response);
-        })
+        })();
     },
     GETAuth(url, cookies, success, fail) {
         (async () => {
