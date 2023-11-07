@@ -12,7 +12,7 @@
             </div>
         </div>
         <section class="content-section details">
-            <div class="range-slider">
+            <!--div class="range-slider">
                 <div class="col-auto justify-center align-self-center" >
                     <h4 class="h4" style="margin: 0;">Диета</h4>
                 </div>
@@ -25,14 +25,14 @@
                         <option value="4">Кето</option>
                     </select>
                 </div>
-            </div>
+            </div-->
             <div class="range-slider">
                 <div class="row justify-between">
                     <div class="col-auto justify-center align-self-center">
                         <span>Количество калорий</span>
                     </div>
                     <div class="col-auto justify-center">
-                        <p>{{ sliders.calories.min }}г - {{ sliders.calories.max }}г</p>
+                        <p>{{ sliders.calories.min }}кал - {{ sliders.calories.max }}кал</p>
                     </div>
                 </div><br>
                 <Slider v-bind="sliders.calories" v-model="sliders.calories.value" @update="calculateLimits"></Slider>
