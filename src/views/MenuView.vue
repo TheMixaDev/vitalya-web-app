@@ -33,7 +33,7 @@
                 <div class="container container-content">
                     <div class="row card-body justify-around" v-for="(dish, index) in menuItem.dishes" :key="index" @click="getReceipt(dish)">
                         <div class="col-auto">
-                            <img class="food-photo" :src="dish.logo" alt="Food photo" />
+                            <img class="food-photo" :src="dish.logo" :alt="dish.name" />
                         </div>
                         <div class="col-auto text-col justify-center align-items-center align-self-center">
                             <a><h4 class="card-heading">{{ dish.name }}</h4></a>

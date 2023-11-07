@@ -1,6 +1,7 @@
 export const FrontendService = {
     getMoveData() {
         let data = JSON.parse(sessionStorage.getItem("moveData"));
+        if(!data) return null;
         sessionStorage.removeItem("moveData");
         return data;
     },

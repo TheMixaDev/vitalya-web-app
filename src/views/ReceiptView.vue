@@ -10,7 +10,7 @@
             <div class="col"></div>
         </div>
         <section class="content-section details">
-            <img class="food-photo-big" src="assets/img/food/food2.png" />
+            <img class="food-photo-big" :src="dish.logo" :alt="dish.name"/>
             <div class="row w-100">
                 <p class="timing">Готовить {{ FrontendService.cookingTime(dish.timeToCook) }}</p>
             </div>
@@ -25,25 +25,30 @@
                 <div class="col-auto justify-center align-content-center align-self-center align-items-center">
                 </div>
             </div>
-            <div class="container area-container">
+            <div class="container area-container" v-if="dish.ingredients.length > 0">
                 <div class="row w-100">
                     <h4 style="padding: 0; margin-bottom: 0; margin-top: 0.5rem; text-align: left; width: 100%;">Ингридиенты</h4>
                     <p class="subtext-small" style="padding: 0; text-align: left!important; width: 100%;">ингредиенты на порцию {{ FrontendService.round(dish.weight) }}г </p>
                 </div>
-                <div class="row justify-between w-100"> <!-- TODO v-for -->
-                    <div class="col-auto">
-                        <div class="row" style="gap: 1rem;">
-                            <div class="col-auto justify-center align-self-center align-items-center align-content-center photo-col" style="max-width: 174px;">
-                                <img class="chicken" src="assets/img/food/chick.png" />
-                            </div>
-                            <div class="col-auto justify-center align-self-center align-items-center align-content-center">
-                                <h5 class="product-name">{ingridient_name}</h5>
+                <div v-if="parsedIngredients.length == dish.ingredients.length">
+                    <div class="row justify-between w-100" v-for="(ingredient, index) in parsedIngredients" :key="index">
+                        <div class="col-auto">
+                            <div class="row" style="gap: 1rem;">
+                                <!--div class="col-auto justify-center align-self-center align-items-center align-content-center photo-col" style="max-width: 174px;">
+                                    <img class="chicken" src="assets/img/food/chick.png" /> TODO add image once ingredients are properly tested
+                                </div-->
+                                <div class="col-auto justify-center align-self-center align-items-center align-content-center">
+                                    <h5 class="product-name">{{ ingredient.name }}</h5>
+                                </div>
                             </div>
                         </div>
+                        <div class="col-auto justify-end align-self-center align-items-end align-content-end quantity-col">
+                            <span class="quantity-item">{{ ingredient.measure }}</span>
+                        </div>
                     </div>
-                    <div class="col-auto justify-end align-self-center align-items-end align-content-end quantity-col">
-                        <span class="quantity-item">{ingridient_measure}</span>
-                    </div>
+                </div>
+                <div class="row w-100" v-else>
+                    <h4 style="padding: 0; margin-bottom: 0; margin-top: 0.5rem; text-align: left; width: 100%;">Зарузка ингридиентов...</h4>
                 </div>
                 <!--div class="row w-100">
                     <h4 style="padding: 0; margin-bottom: 0; text-align: left; width: 100%;">Шаги приготовления</h4>
@@ -72,6 +77,7 @@
 
 <script>
 import { FrontendService } from '../services/FrontendService';
+import { IngredientsService } from '../services/IngredientsService';
 import VChart from "vue-echarts";
 
 export default {
@@ -89,7 +95,7 @@ export default {
             dish: {
                 id: -1,
                 name: "Загрузка...",
-                logo: "Loading...",
+                logo: "Загрузка...",
                 calories: 0,
                 protein: 0,
                 fat: 0,
@@ -97,15 +103,34 @@ export default {
                 cellulose: 0,
                 weight: 0,
                 timeToCook: 0,
-                dietId: {
-                    id: 1,
-                    name: "Diet1"
-                },
-                typeId: {
-                    id: 1,
-                    name: "DishType1"
-                },
-                ingredients: [],
+                dietId: 1,
+                typeId: 1,
+                ingredients: [ // TODO: debugging measures, remove once ingredients are properly tested
+                    {
+                        id: 1,
+                        name: "Test 1",
+                        measureType: 1,
+                        measureCount: 2200.0
+                    },
+                    {
+                        id: 2,
+                        name: "Test 2",
+                        measureType: 1,
+                        measureCount: 90.0
+                    },
+                    {
+                        id: 3,
+                        name: "Test 3",
+                        measureType: 2,
+                        measureCount: 120.0
+                    },
+                    {
+                        id: 4,
+                        name: "Test 4",
+                        measureType: 2,
+                        measureCount: 90.0
+                    }
+                ],
             },
             chartOptions: {
                 series: [
@@ -132,7 +157,8 @@ export default {
                         }
                     }
                 ]
-            }
+            },
+            parsedIngredients: []
         }
     },
     methods: {
@@ -146,6 +172,34 @@ export default {
             this.chartOptions.series[0].data[0].name = `Белки ${Math.round(this.dish.protein / total * 100)}%`;
             this.chartOptions.series[0].data[1].name = `Жиры ${Math.round(this.dish.fat / total * 100)}%`;
             this.chartOptions.series[0].data[2].name = `Углеводы ${Math.round(this.dish.carbohydrates / total * 100)}%`;
+        },
+        parseIngridients() {
+            let input = [];
+            this.dish.ingredients.forEach((ingredient) => {
+                input.push({
+                    id: ingredient.id,
+                    count: ingredient.measureCount
+                });
+            });
+            IngredientsService.measureMapping(this.$cookies, {input: input}, data => {
+                this.dish.ingredients.forEach((ingredient) => {
+                    let measureCount = ingredient.measureCount;
+                    let measureName = ingredient.measureType == 1 ? "г" : "мл";
+                    let measureData = data.output.find(m => m.id == ingredient.id);
+                    if(measureData.measureName != null)
+                        measureName = " "+measureData.measureName;
+                    else {
+                        if(measureCount > 2000) {
+                            measureName = ingredient.measureType == 1 ? "кг" : "л";
+                            measureCount = FrontendService.round(ingredient.measureCount / 1000);
+                        }
+                    }
+                    this.parsedIngredients.push({
+                        name: ingredient.name,
+                        measure: measureCount + measureName
+                    })
+                });
+            }, () => FrontendService.notifyError(this.$notify, "Не удалось получить информацию об ингредиентах, попробуйте позже"))
         }
     },
     mounted() {
@@ -153,6 +207,7 @@ export default {
         if(!moveData) return this.$router.go(-1);
         this.dish = moveData.dish;
         this.showMicronutrients();
+        this.parseIngridients();
     }
 }
 </script>
