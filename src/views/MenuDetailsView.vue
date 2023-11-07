@@ -82,7 +82,7 @@ export default {
     },
     data() {
         return {
-            menu: [],
+            menu: {},
             totalMicronutrients: {
                 calories: 0,
                 protein: 0,
@@ -130,12 +130,6 @@ export default {
     },
     methods: {
         calculateMicronutrients() {
-            for(let i of this.menu) {
-                let micronutrients = i.micronutrients;
-                for(let j in micronutrients) {
-                    this.totalMicronutrients[j] += micronutrients[j];
-                }
-            }
             let total = this.totalMicronutrients.protein + this.totalMicronutrients.fat + this.totalMicronutrients.carbohydrates;
             if(total == 0) return;
             this.chartOptions.series[0].data[0].value = this.totalMicronutrients.protein / total;
@@ -152,6 +146,7 @@ export default {
                     this.searchFailed();
                 else {
                     this.menu = data;
+                    this.totalMicronutrients = data.params;
                     this.loadTargets();
                 }
             }, this.searchFailed);

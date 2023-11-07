@@ -87,7 +87,7 @@
             </div>
             <meals>
                 <h4 class="no_bottom_margin">Приемы пищи</h4>
-                <div class="container container-content range-slider" v-for="(mealtime, index) in userParams.eatingsParams?.filter(m => !m.removed)" :key="index">
+                <div class="container container-content range-slider" v-for="(mealtime, index) in userParams.eatings?.filter(m => !m.removed)" :key="index">
                     <div class="row card-body justify-around">
                         <div class="col-auto">
                             <h4 class="car-heading">{{ mealtime.name }}</h4>
@@ -193,23 +193,22 @@ export default {
             this.userParams.params.minCarbohydrates = this.sliders.carbohydrates.value[0];
             this.userParams.params.maxCarbohydrates = this.sliders.carbohydrates.value[1];
             this.userParams.params.minCellulose = this.sliders.minCellulose.value;
-            this.userParams.eatingsParams = this.userParams.eatingsParams.filter(e => !e.removed);
-            this.userParams.eatingsParams.forEach(e => e.type?.id ? e.type = e.type.id : '');
+            this.userParams.eatings = this.userParams.eatings.filter(e => !e.removed);
             UserService.setParams(this.$cookies, this.userParams,
                 () => FrontendService.notifySuccess(this.$notify, "Параметры сохранены"),
                 () => FrontendService.notifyError(this.$notify, "Не удалось сохранить параметры")
             );
         },
         editEating(mealtime) {
-            for(let index in this.userParams.eatingsParams) {
-                if(this.userParams.eatingsParams[index].name == mealtime.name && !this.userParams.eatingsParams[index].removed) {
+            for(let index in this.userParams.eatings) {
+                if(this.userParams.eatings[index].name == mealtime.name && !this.userParams.eatings[index].removed) {
                     FrontendService.setMoveData({
                         saveFlag: true,
                         save: {
                             sliders: this.sliders,
                             userParams: this.userParams
                         },
-                        eating: this.userParams.eatingsParams[index],
+                        eating: this.userParams.eatings[index],
                     });
                     this.$router.push({name: 'MealtimeEdit'});
                     return;
@@ -218,12 +217,12 @@ export default {
             FrontendService.notifyError(this.$notify, "Не удалось отредактировать прием пищи, попробуйте позже");
         },
         deleteEating(mealtime) {
-            for(let index in this.userParams.eatingsParams) {
-                if(this.userParams.eatingsParams[index].name == mealtime.name) {
-                    this.userParams.eatingsParams[index].removed = true;
-                    if(this.userParams.eatingsParams[index].name.includes("Перекус")) {
+            for(let index in this.userParams.eatings) {
+                if(this.userParams.eatings[index].name == mealtime.name) {
+                    this.userParams.eatings[index].removed = true;
+                    if(this.userParams.eatings[index].name.includes("Перекус")) {
                         let count = 1;
-                        this.userParams.eatingsParams.filter(e => !e.removed && e.name.includes("Перекус")).forEach(e => {
+                        this.userParams.eatings.filter(e => !e.removed && e.name.includes("Перекус")).forEach(e => {
                             e.name = "Перекус №"+count;
                             count++;
                         });
@@ -234,31 +233,25 @@ export default {
             FrontendService.notifyError(this.$notify, "Не удалось удалить прием пищи, попробуйте позже");
         },
         addEating() {
-            let data = JSON.parse(JSON.stringify(this.userParams.eatingsParams.filter(e => !e.removed).map(e => e.name)));
+            let data = JSON.parse(JSON.stringify(this.userParams.eatings.filter(e => !e.removed).map(e => e.name)));
             if(data.length > 8) {
                 FrontendService.notifyError(this.$notify, "Количество приемов пищи слишком велико");
                 return;
             }
             if(!data.includes("Ужин")) {
-                this.userParams.eatingsParams.push({
+                this.userParams.eatings.push({
                     "name": "Ужин",
                     "size": 0.4,
-                    "type": {
-                        "id": 1,
-                        "name": "DishType1" // TODO: REPLACE: Type на ужин
-                    },
-                    "difficulty": 0, // TODO: REPLACE: Diff на стандартное
+                    "type": 3,
+                    "difficulty": 3,
                     "dishCount": 2
                 });
             } else {
-                this.userParams.eatingsParams.push({
-                    "name": "Перекус №"+(this.userParams.eatingsParams.filter(e => e.name.includes("Перекус") && !e.removed).length+1),
+                this.userParams.eatings.push({
+                    "name": "Перекус №"+(this.userParams.eatings.filter(e => e.name.includes("Перекус") && !e.removed).length+1),
                     "size": 0.2,
-                    "type": {
-                        "id": 1,
-                        "name": "DishType1" // TODO: REPLACE: Type на любой
-                    },
-                    "difficulty": 0, // TODO: REPLACE: Diff на просто
+                    "type": 0,
+                    "difficulty": 2,
                     "dishCount": 1
                 });
             }
@@ -273,9 +266,9 @@ export default {
             this.sliders = moveData.save.sliders;
             this.userParams = moveData.save.userParams;
             if(moveData.updated) {
-                for(let index in this.userParams.eatingsParams) {
-                    if(this.userParams.eatingsParams[index].name == moveData.updated.name) {
-                        this.userParams.eatingsParams[index] = moveData.updated;
+                for(let index in this.userParams.eatings) {
+                    if(this.userParams.eatings[index].name == moveData.updated.name) {
+                        this.userParams.eatings[index] = moveData.updated;
                         FrontendService.notifySuccess(this.$notify, "Данные о приеме пищи обновлены");
                         return;
                     }

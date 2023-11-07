@@ -125,7 +125,6 @@ export default {
         let moveData = FrontendService.getMoveData();
         if(!moveData) return this.$router.go(-1);
         if(moveData.saveFlag) this.save = moveData.save;
-        moveData.eating.type = moveData.eating.type.id;
         this.eating = moveData.eating;
     }
 }

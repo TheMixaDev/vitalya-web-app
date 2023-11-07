@@ -64,7 +64,7 @@ export default {
     },
     data() {
         return {
-            menu: [],
+            menu: {},
             totalMicronutrients: {
                 calories: 0,
                 protein: 0,
@@ -102,19 +102,6 @@ export default {
     },
     methods: {
         calculateMicronutrients() {
-            this.totalMicronutrients = {
-                calories: 0,
-                protein: 0,
-                fat: 0,
-                carbohydrates: 0,
-                cellulose: 0
-            };
-            for(let i of this.menu) {
-                let micronutrients = i.micronutrients;
-                for(let j in micronutrients) {
-                    this.totalMicronutrients[j] += micronutrients[j];
-                }
-            }
             let total = this.totalMicronutrients.protein + this.totalMicronutrients.fat + this.totalMicronutrients.carbohydrates;
             if(total == 0) return;
             this.chartOptions.series[0].data[0].value = this.totalMicronutrients.protein / total;
@@ -162,7 +149,8 @@ export default {
                 if(!data || data.length == 0)
                     this.regenerateMenu();
                 else {
-                    this.menu = data;
+                    this.menu = data.eatings;
+                    this.totalMicronutrients = data.params;
                     this.calculateMicronutrients();
                 }
             }, this.regenerateMenu);
@@ -175,6 +163,7 @@ export default {
             UserService.getParams(this.$cookies, () => {
                 AlgorithmService.calculateMenu(this.$cookies, data => {
                     this.menu = data.eatings;
+                    this.totalMicronutrients = data.params;
                     this.calculateMicronutrients();
                     FrontendService.notifySuccess(this.$notify, "Меню перегенерировано");
                 }, () => FrontendService.notifyError(this.$notify, "Не удалось сгенерировать меню по указанным параметрам"));
@@ -196,19 +185,19 @@ export default {
                                 "minCellulose": 25,
                                 "maxCellulose": 999
                         },
-                        "eatingsParams": [
+                        "eatings": [
                             {
                                 "name": "Завтрак",
                                 "size": 0.4,
                                 "type": 1,
-                                "difficulty": 0, // TODO: REPLACE: Diff на стандартное
+                                "difficulty": 3,
                                 "dishCount": 2
                             },
                             {
                                 "name": "Обед",
                                 "size": 0.4,
                                 "type": 2,
-                                "difficulty": 0, // TODO: REPLACE: Diff на стандартное
+                                "difficulty": 3,
                                 "dishCount": 0
                             }
                         ]
@@ -220,17 +209,12 @@ export default {
         },
         regenerateSubmenu(menuItem) {
             UserService.getParams(this.$cookies, params => {
-                params.eatings = params.eatingsParams;
-                params.idealMicronutrients = params.params;
                 delete params["calories"];
                 delete params["isMacronutrientsParamsSet"];
-                delete params["eatingsParams"];
-                delete params["params"];
                 params.excludeDishes = menuItem.dishes.map(dish => dish.id);
-                for(let i in params.eatings)
-                    params.eatings[i].type = params.eatings[i].type.id;
                 AlgorithmService.calculateCustom(this.$cookies, params, data => {
                     this.menu = data.eatings;
+                    this.totalMicronutrients = data.params;
                     this.calculateMicronutrients();
                     FrontendService.notifySuccess(this.$notify, "Меню перегенерировано");
                 }, () => FrontendService.notifyError(this.$notify, "Не удалось сгенерировать меню по указанным параметрам"));
@@ -247,7 +231,8 @@ export default {
     mounted() {
         let moveData = FrontendService.getMoveData();
         if(!moveData) return this.loadMenu();
-        this.menu = moveData.menu;
+        this.menu = moveData.data.eatings;
+        this.totalMicronutrients = moveData.data.params;
         this.calculateMicronutrients();
     }
 }

@@ -13,8 +13,8 @@ export default {
     methods: {
         autoLoadMenu() {
             UserService.getCache(this.$cookies, data => {
-                if(data && data.length > 0) {
-                    FrontendService.setMoveData({menu: data});
+                if(data && data.eatings && data.eatings.length > 0) {
+                    FrontendService.setMoveData({data: data});
                     this.$router.push({name: 'Menu'})
                 } else this.$router.push({name: 'EmptyMenu'});
             }, () => this.$router.push({name: 'EmptyMenu'}));
