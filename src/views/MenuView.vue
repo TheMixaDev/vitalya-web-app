@@ -31,7 +31,7 @@
                     </div>
                 </div>
                 <div class="container container-content">
-                    <div class="row card-body justify-around" v-for="(dish, index) in menuItem.dishes" :key="index" @click="getReceipt(dish)">
+                    <div class="row card-body justify-around" v-for="(dish, index) in menuItem.dishes" :key="index" @click="getRecipe(dish)">
                         <div class="col-auto">
                             <img class="food-photo" :src="dish.logo" :alt="dish.name" />
                         </div>
@@ -171,7 +171,7 @@ export default {
                 if(err.response.status == 404) {
                     UserService.setParams(this.$cookies,
                     {
-                        "diet": 1,
+                        "diet": 0,
                         "calories": 2000,
                         "isMacronutrientsParamsSet": true,
                         "params": {
@@ -223,9 +223,9 @@ export default {
         goToDetails() {
             this.$router.push({name: 'MenuDetails'})
         },
-        getReceipt(dish) {
+        getRecipe(dish) {
             FrontendService.setMoveData({dish: dish});
-            this.$router.push({name: 'Receipt'})
+            this.$router.push({name: 'Recipe'})
         }
     },
     mounted() {

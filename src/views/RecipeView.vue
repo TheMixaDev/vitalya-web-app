@@ -25,51 +25,55 @@
                 <div class="col-auto justify-center align-content-center align-self-center align-items-center">
                 </div>
             </div>
-            <div class="container area-container" v-if="dish.ingredients.length > 0">
-                <div class="row w-100">
-                    <h4 style="padding: 0; margin-bottom: 0; margin-top: 0.5rem; text-align: left; width: 100%;">Ингридиенты</h4>
-                    <p class="subtext-small" style="padding: 0; text-align: left!important; width: 100%;">ингредиенты на порцию {{ FrontendService.round(dish.weight) }}г </p>
-                </div>
-                <div v-if="parsedIngredients.length == dish.ingredients.length">
-                    <div class="row justify-between w-100" v-for="(ingredient, index) in parsedIngredients" :key="index">
-                        <div class="col-auto">
-                            <div class="row" style="gap: 1rem;">
-                                <!--div class="col-auto justify-center align-self-center align-items-center align-content-center photo-col" style="max-width: 174px;">
-                                    <img class="chicken" src="assets/img/food/chick.png" /> TODO add image once ingredients are properly tested
-                                </div-->
-                                <div class="col-auto justify-center align-self-center align-items-center align-content-center">
-                                    <h5 class="product-name">{{ ingredient.name }}</h5>
+            <div class="container area-container">
+                <ingridients v-if="dish.ingredients.length > 0">
+                    <div class="row w-100">
+                        <h4 style="padding: 0; margin-bottom: 0; margin-top: 0.5rem; text-align: left; width: 100%;">Ингридиенты</h4>
+                        <p class="subtext-small" style="padding: 0; text-align: left!important; width: 100%;">ингредиенты на порцию {{ FrontendService.round(dish.weight) }}г </p>
+                    </div>
+                    <div v-if="parsedIngredients.length == dish.ingredients.length">
+                        <div class="row justify-between w-100" v-for="(ingredient, index) in parsedIngredients" :key="index">
+                            <div class="col-auto">
+                                <div class="row" style="gap: 1rem;">
+                                    <!--div class="col-auto justify-center align-self-center align-items-center align-content-center photo-col" style="max-width: 174px;">
+                                        <img class="chicken" src="assets/img/food/chick.png" /> TODO add image once ingredients are properly tested
+                                    </div-->
+                                    <div class="col-auto justify-center align-self-center align-items-center align-content-center">
+                                        <h5 class="product-name">{{ ingredient.name }}</h5>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="col-auto justify-end align-self-center align-items-end align-content-end quantity-col">
-                            <span class="quantity-item">{{ ingredient.measure }}</span>
+                            <div class="col-auto justify-end align-self-center align-items-end align-content-end quantity-col">
+                                <span class="quantity-item">{{ ingredient.measure }}</span>
+                            </div>
                         </div>
                     </div>
-                </div>
-                <div class="row w-100" v-else>
-                    <h4 style="padding: 0; margin-bottom: 0; margin-top: 0.5rem; text-align: left; width: 100%;">Зарузка ингридиентов...</h4>
-                </div>
-                <!--div class="row w-100">
-                    <h4 style="padding: 0; margin-bottom: 0; text-align: left; width: 100%;">Шаги приготовления</h4>
-                </div>
-                <div class="row w-100">
-                    <ul class="ul">
-                        <li class="col-auto">
-                            <span class="step">
-                                Шаг {step_number}
-                            </span>
-                            <p class="receipt-step">
-                                {step_data}
-                            </p>
-                        </li>
-                        <li>
-                            <span>
-                                Приятного аппетита!
-                            </span>
-                        </li>
-                    </ul>
-                </div-->
+                    <div class="row w-100" v-else>
+                        <h4 style="padding: 0; margin-bottom: 0; margin-top: 0.5rem; text-align: left; width: 100%;">Зарузка ингридиентов...</h4>
+                    </div>
+                </ingridients>
+                <steps v-if="recipeSteps.length > 0">
+                    <div class="row w-100">
+                        <h4 style="padding: 0; margin-bottom: 0; text-align: left; width: 100%;">Шаги приготовления</h4>
+                    </div>
+                    <div class="row w-100">
+                        <ul class="ul">
+                            <li class="col-auto" v-for="(step, index) in recipeSteps" :key="step.relativeId">
+                                <span class="step">
+                                    Шаг {{ index + 1 }}
+                                </span>
+                                <p class="receipt-step">
+                                    {{ step.text }}
+                                </p>
+                            </li>
+                            <li>
+                                <span>
+                                    Приятного аппетита!
+                                </span>
+                            </li>
+                        </ul>
+                    </div>
+                </steps>
             </div>
         </section>
     </section>
@@ -79,9 +83,10 @@
 import { FrontendService } from '../services/FrontendService';
 import { IngredientsService } from '../services/IngredientsService';
 import VChart from "vue-echarts";
+import { RecipeService } from '../services/RecipeService';
 
 export default {
-    name: 'ReceiptView',
+    name: 'RecipeView',
     components: {
         VChart
     },
@@ -158,7 +163,8 @@ export default {
                     }
                 ]
             },
-            parsedIngredients: []
+            parsedIngredients: [],
+            recipeSteps: []
         }
     },
     methods: {
@@ -199,7 +205,11 @@ export default {
                         measure: measureCount + measureName
                     })
                 });
-            }, () => FrontendService.notifyError(this.$notify, "Не удалось получить информацию об ингредиентах, попробуйте позже"))
+            }, () => FrontendService.notifyError(this.$notify, "Не удалось получить информацию об ингредиентах, попробуйте позже"));
+            RecipeService.recipe(this.$cookies, this.dish.id, data => {
+                if(data && data.length > 0 && data[0].steps.length > 0)
+                    this.recipeSteps = data[0].steps;
+            }, () => FrontendService.notifyError(this.$notify, "Не удалось получить информацию о шагах приготовления, попробуйте позже"))
         }
     },
     mounted() {

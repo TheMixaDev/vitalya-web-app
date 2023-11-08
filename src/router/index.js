@@ -19,9 +19,9 @@ const router = createRouter({
       component: () => import('../views/MenuView.vue')
     },
     {
-      path: '/receipt',
-      name: 'Receipt',
-      component: () => import('../views/ReceiptView.vue')
+      path: '/recipe',
+      name: 'Recipe',
+      component: () => import('../views/RecipeView.vue')
     },
     {
       path: '/mealtime_edit',
