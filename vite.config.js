@@ -14,5 +14,19 @@ export default defineConfig({
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url))
     }
+  },
+  build: {
+    rollupOptions: {
+      external: [
+        'assets/img/arrow-left.svg',
+        'assets/img/arrow-right.svg',
+        'assets/img/cal.svg',
+        'assets/img/dots.svg',
+        'assets/img/refresh.svg',
+        'assets/img/save.svg',
+        'assets/img/settings.svg',
+        'favicon.ico'
+      ]
+    },
   }
 })
