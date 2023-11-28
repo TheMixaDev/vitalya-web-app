@@ -35,7 +35,7 @@
                         <p>{{ sliders.calories.min }}кал - {{ sliders.calories.max }}кал</p>
                     </div>
                 </div><br>
-                <Slider :class="sliderConnectClass('calories')" v-bind="sliders.calories" v-model="sliders.calories.value" @update="calculateLimits"></Slider>
+                <Slider class="calories-slider" v-bind="sliders.calories" v-model="sliders.calories.value" @update="calculateLimits"></Slider>
             </div>
             <h4 class="no_bottom_margin">Макронутриенты</h4>
             <div>
@@ -48,7 +48,7 @@
                             <p>{{ sliders.protein.min }}г - {{ sliders.protein.max }}г</p>
                         </div>
                     </div><br>
-                    <Slider :class="sliderConnectClass('protein')" v-bind="sliders.protein" v-model="sliders.protein.value"></Slider>
+                    <Slider class="protein-slider" v-bind="sliders.protein" v-model="sliders.protein.value"></Slider>
                 </div>
                 <div class="range-slider">
                     <div class="row justify-between">
@@ -59,7 +59,7 @@
                             <p>{{ sliders.fat.min }}г - {{ sliders.fat.max }}г</p>
                         </div>
                     </div><br>
-                    <Slider :class="sliderConnectClass('fat')" v-bind="sliders.fat" v-model="sliders.fat.value"></Slider>
+                    <Slider class="fat-slider" v-bind="sliders.fat" v-model="sliders.fat.value"></Slider>
                 </div>
                 <div class="range-slider">
                     <div class="row justify-between">
@@ -70,7 +70,7 @@
                             <p>{{ sliders.carbohydrates.min }}г - {{ sliders.carbohydrates.max }}г</p>
                         </div>
                     </div><br>
-                    <Slider :class="sliderConnectClass('carbohydrates')" v-bind="sliders.carbohydrates" v-model="sliders.carbohydrates.value"></Slider>
+                    <Slider class="carbohydrates-slider" v-bind="sliders.carbohydrates" v-model="sliders.carbohydrates.value"></Slider>
                 </div>
             </div>
             <h4 class="no_bottom_margin">Микронутриенты</h4>
@@ -83,7 +83,7 @@
                         <p>{{ sliders.minCellulose.min }}г - {{ sliders.minCellulose.max }}г</p>
                     </div>
                 </div><br>
-                <Slider :class="sliderConnectClass('minCellulose')" v-bind="sliders.minCellulose" v-model="sliders.minCellulose.value"></Slider>
+                <Slider class="minCellulose-slider" v-bind="sliders.minCellulose" v-model="sliders.minCellulose.value"></Slider>
             </div>
             <meals>
                 <h4 class="no_bottom_margin">Приемы пищи</h4>
@@ -153,7 +153,7 @@ export default {
                     min: 200,
                     max: 2000,
                     step: 0.1,
-                    value: [0, 1],
+                    value: 0,
                     format: v => `${FrontendService.round(v)}кал`,
                     colorClass: 'calories-slider'
                 },
@@ -161,7 +161,7 @@ export default {
                     min: 25,
                     max: 50,
                     step: 0.1,
-                    value: [0, 1],
+                    value: 0,
                     format: v => `${FrontendService.round(v)}г`,
                     colorClass: 'minCellulose-slider'
                 }
@@ -172,12 +172,6 @@ export default {
         }
     },
     methods: {
-      sliderConnectClass(type) {
-        return {
-          'slider-connect': true,
-          [this.sliders[type].colorClass]: true,
-        };
-      },
         calculateLimits() {
             this.sliders.protein.max = FrontendService.round(this.sliders.calories.value / 4)*1;
             this.sliders.fat.max = FrontendService.round(this.sliders.calories.value / 9)*1;
@@ -186,7 +180,7 @@ export default {
         loadParams() {
             UserService.getParams(this.$cookies, data => {
                 this.userParams = data;
-                this.sliders.calories.value = data.calories;
+                this.sliders.calories.value = data.params.calories;
                 this.calculateLimits();
                 this.sliders.protein.value = [data.params.minProtein, data.params.maxProtein];
                 this.sliders.fat.value = [data.params.minFat, data.params.maxFat];

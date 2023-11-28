@@ -16,7 +16,7 @@
             </div>
         </div>
         <div class="row overlay-top w-100"></div>
-        <div class="content-section flex-column main-container" style="position: relative" @scroll="closeDropdowns">
+        <div class="content-section flex-column main-container" style="position: relative; padding-bottom: 102px;" @scroll="closeDropdowns">
             <div class="container area-container2" v-for="(menuItem, index) in menu" :key="index">
                 <div class="dropdown-content" style="display: none" :id="'dropdown'+menuItem.name">
                     <a @click="regenerateSubmenu(menuItem)" class="flex justify-between"> Перегенерировать {{ menuItem.name }} <img src="assets/img/refresh.svg" alt="Refresh icon" /> </a>
@@ -238,8 +238,6 @@ export default {
 }
 </script>
 <style scoped>
-.section {
-}
 .main-container {
   height: 100%;
   max-height: 80vh;
