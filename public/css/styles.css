@@ -143,6 +143,15 @@ section {
     height: 100%;
     max-height: 70px;
 }
+.btn_smaller {
+    color: #afafaf;
+    font-weight: 500;
+    text-align: center;
+    border-radius: 6px;
+    width: 100%;
+    max-width: 62px!important;
+    margin-left: 1rem;
+}
 .btn:hover, .btn_small:hover {
     cursor: pointer;
 }
@@ -533,6 +542,8 @@ li:last-child {
     align-items: center!important;
     width: 100%;
     max-width: 125px!important;
+    font-size: 0.8rem;
+    text-align: right;
 }
 select {
     appearance: none;

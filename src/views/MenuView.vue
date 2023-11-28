@@ -1,5 +1,5 @@
 <template>
-    <section>
+    <section class="section">
         <div class="row header" style="position: relative;">
             <h3 class="h3" style="margin-top: 2rem;">Твоё меню</h3>
             <div class="row flex justify-center">
@@ -16,8 +16,8 @@
             </div>
         </div>
         <div class="row overlay-top w-100"></div>
-        <section class="content-section" style="position: relative" @scroll="closeDropdowns">
-            <section v-for="(menuItem, index) in menu" :key="index">
+        <div class="content-section flex-column main-container" style="position: relative" @scroll="closeDropdowns">
+            <div class="container area-container2" v-for="(menuItem, index) in menu" :key="index">
                 <div class="dropdown-content" style="display: none" :id="'dropdown'+menuItem.name">
                     <a @click="regenerateSubmenu(menuItem)" class="flex justify-between"> Перегенерировать {{ menuItem.name }} <img src="assets/img/refresh.svg" alt="Refresh icon" /> </a>
                     <RouterLink to="/menu_edit" class="flex justify-between">Настроить {{ menuItem.name }} <img src="assets/img/settings.svg" alt="Settings icon" /></RouterLink>
@@ -42,9 +42,9 @@
                         <div class="col-auto"></div>
                     </div>
                 </div>
-            </section>
+            </div>
             <div class="row overlay-bottom w-100"></div>
-        </section>
+        </div>
         <div class="row footer">
             <a class="btn" @click="regenerateMenu">Перегенерировать меню</a>
         </div>
@@ -237,3 +237,18 @@ export default {
     }
 }
 </script>
+<style scoped>
+.section {
+}
+.main-container {
+  height: 100%;
+  max-height: 80vh;
+  width: 100%;
+}
+.area-container2 {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 0;
+}
+</style>

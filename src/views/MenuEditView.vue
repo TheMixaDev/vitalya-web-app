@@ -35,7 +35,7 @@
                         <p>{{ sliders.calories.min }}кал - {{ sliders.calories.max }}кал</p>
                     </div>
                 </div><br>
-                <Slider v-bind="sliders.calories" v-model="sliders.calories.value" @update="calculateLimits"></Slider>
+                <Slider :class="sliderConnectClass('calories')" v-bind="sliders.calories" v-model="sliders.calories.value" @update="calculateLimits"></Slider>
             </div>
             <h4 class="no_bottom_margin">Макронутриенты</h4>
             <div>
@@ -48,7 +48,7 @@
                             <p>{{ sliders.protein.min }}г - {{ sliders.protein.max }}г</p>
                         </div>
                     </div><br>
-                    <Slider v-bind="sliders.protein" v-model="sliders.protein.value"></Slider>
+                    <Slider :class="sliderConnectClass('protein')" v-bind="sliders.protein" v-model="sliders.protein.value"></Slider>
                 </div>
                 <div class="range-slider">
                     <div class="row justify-between">
@@ -59,7 +59,7 @@
                             <p>{{ sliders.fat.min }}г - {{ sliders.fat.max }}г</p>
                         </div>
                     </div><br>
-                    <Slider v-bind="sliders.fat" v-model="sliders.fat.value"></Slider>
+                    <Slider :class="sliderConnectClass('fat')" v-bind="sliders.fat" v-model="sliders.fat.value"></Slider>
                 </div>
                 <div class="range-slider">
                     <div class="row justify-between">
@@ -70,7 +70,7 @@
                             <p>{{ sliders.carbohydrates.min }}г - {{ sliders.carbohydrates.max }}г</p>
                         </div>
                     </div><br>
-                    <Slider v-bind="sliders.carbohydrates" v-model="sliders.carbohydrates.value"></Slider>
+                    <Slider :class="sliderConnectClass('carbohydrates')" v-bind="sliders.carbohydrates" v-model="sliders.carbohydrates.value"></Slider>
                 </div>
             </div>
             <h4 class="no_bottom_margin">Микронутриенты</h4>
@@ -83,22 +83,25 @@
                         <p>{{ sliders.minCellulose.min }}г - {{ sliders.minCellulose.max }}г</p>
                     </div>
                 </div><br>
-                <Slider v-bind="sliders.minCellulose" v-model="sliders.minCellulose.value"></Slider>
+                <Slider :class="sliderConnectClass('minCellulose')" v-bind="sliders.minCellulose" v-model="sliders.minCellulose.value"></Slider>
             </div>
             <meals>
                 <h4 class="no_bottom_margin">Приемы пищи</h4>
                 <div class="container container-content range-slider" v-for="(mealtime, index) in userParams.eatings?.filter(m => !m.removed)" :key="index">
-                    <div class="row card-body justify-around">
-                        <div class="col-auto">
+                    <div class="row header-row card-body justify-around">
+                        <div class="row ">
+                          <div class="col-auto">
                             <h4 class="car-heading">{{ mealtime.name }}</h4>
-                        </div>
-                        <div class="col-auto text-col justify-center align-items-center align-self-center">
-                            <a class="btn_small" @click="editEating(mealtime)">Редактировать</a>
-                        </div>
-                        <div class="col-auto text-col justify-center align-items-center align-self-center">
-                            <a class="btn_small" @click="deleteEating(mealtime)" v-if="index > 0">Удалить</a>
+                          </div>
+                            <div class="col-auto flex flex-column justify-center align-items-center align-content-center">
+                              <a class="btn_smaller" @click="editEating(mealtime)"><i class="fa-solid fa-pen-to-square"></i></a>
+                            </div>
+                            </div>
+                        <div class="col-auto text-col justify-center align-items-center align-self-center" style="width: 100%; min-width: 30px; max-width: 30px;">
+                            <a class="btn_smaller" @click="deleteEating(mealtime)" v-if="index > 0"><i class="delete fa-solid fa-trash"></i></a>
                         </div>
                     </div>
+
                 </div>
             </meals>
             <div class="row footer">
@@ -127,35 +130,40 @@ export default {
                     max: 100,
                     step: 0.1,
                     value: [0, 100],
-                    format: v => `${FrontendService.round(v)}г`
+                    format: v => `${FrontendService.round(v)}г`,
+                    colorClass: 'protein-slider'
                 },
                 fat: {
                     min: 0,
                     max: 100,
                     step: 0.1,
                     value: [0, 100],
-                    format: v => `${FrontendService.round(v)}г`
+                    format: v => `${FrontendService.round(v)}г`,
+                    colorClass: 'fat-slider'
                 },
                 carbohydrates: {
                     min: 0,
                     max: 100,
                     step: 0.1,
                     value: [0, 100],
-                    format: v => `${FrontendService.round(v)}г`
+                    format: v => `${FrontendService.round(v)}г`,
+                    colorClass: 'carbohydrates-slider'
                 },
                 calories: {
                     min: 200,
                     max: 2000,
                     step: 0.1,
-                    value: 0,
-                    format: v => `${FrontendService.round(v)}кал`
+                    value: [0, 1],
+                    format: v => `${FrontendService.round(v)}кал`,
+                    colorClass: 'calories-slider'
                 },
                 minCellulose: {
                     min: 25,
                     max: 50,
                     step: 0.1,
-                    value: 0,
-                    format: v => `${FrontendService.round(v)}г`
+                    value: [0, 1],
+                    format: v => `${FrontendService.round(v)}г`,
+                    colorClass: 'minCellulose-slider'
                 }
             },
             userParams: {
@@ -164,6 +172,12 @@ export default {
         }
     },
     methods: {
+      sliderConnectClass(type) {
+        return {
+          'slider-connect': true,
+          [this.sliders[type].colorClass]: true,
+        };
+      },
         calculateLimits() {
             this.sliders.protein.max = FrontendService.round(this.sliders.calories.value / 4)*1;
             this.sliders.fat.max = FrontendService.round(this.sliders.calories.value / 9)*1;
@@ -283,5 +297,80 @@ export default {
 <style>
 .no_bottom_margin {
     margin-bottom: 0;
+}
+.protein-slider .slider-connect  {
+  background-color: #2D001E;
+}
+.protein-slider .slider-tooltip  {
+  background-color: #2D001E;
+  border-color: #2D001E;
+}
+.protein-slider .slider-touch-area {
+  background-color: #2D001E;
+  border-radius: 50%;
+}
+.fat-slider .slider-connect {
+  background-color: #188027;
+}
+.fat-slider .slider-tooltip {
+  background-color: #188027;
+  border-color: #188027;
+}
+.fat-slider .slider-touch-area {
+  background-color: #188027;
+  border-radius: 50%;
+}
+.carbohydrates-slider .slider-connect {
+  background-color: #FE995E;
+}
+.carbohydrates-slider .slider-touch-area {
+  background-color: #FE995E;
+  border-radius: 50%;
+  box-shadow: none;
+}
+.carbohydrates-slider .slider-tooltip {
+  background-color: #FE995E;
+  border-color: #FE995E;
+}
+
+.calories-slider .slider-connect {
+  background-color: rgba(250, 74, 12, 1);
+}
+.calories-slider .slider-touch-area {
+  background-color: rgba(250, 74, 12, 1);
+  border-radius: 50%;
+}
+.calories-slider .slider-tooltip {
+  background-color: rgba(250, 74, 12, 1);
+  border-color: #f44336;
+}
+
+.minCellulose-slider .slider-connect {
+  background-color: rgba(250, 74, 12, 1);
+}
+.minCellulose-slider .slider-tooltip {
+  background-color: rgba(250, 74, 12, 1);
+  border-color: #f44336;
+}
+.minCellulose-slider .slider-touch-area {
+  background-color: rgba(250, 74, 12, 1);
+  border-radius: 50%;
+}
+.footer {
+  position: fixed;
+  bottom: 0;
+  z-index: 999999;
+  background-color: #f5f5f8;
+}
+.content-section.details {
+  margin-bottom: 6rem;
+}
+.header-row {
+  display: flex;
+  flex-wrap: nowrap;
+}
+.delete {
+  color: #f44336;
+  opacity: 0.5;
 }
 </style>

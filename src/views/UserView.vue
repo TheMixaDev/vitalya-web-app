@@ -2,17 +2,36 @@
     <section>
         <div class="row header">
             <h3 class="h3">Регистрация</h3>
+            <h1 class="subtext">Введите ваши данные</h1>
         </div>
 
         <div class="container">
-            <h1 class="subtext">Введите ваши данные:</h1>
-            Пол: <input type="number" class="input" v-model="user.sex"/> (поменять на radio-button)
-            <br>
-            Рост: <input type="number" class="input" v-model="user.height"/>см
-            <br>
-            Вес: <input type="number" class="input" v-model="user.weight"/>кг
-            <br>
-            Дата рождения: <VueDatePicker v-model="user.birthday" time-picker="false" style="display: inline-flex; width: 200px;"/>
+            <h3>Пол</h3>
+            <div class="row">
+              <div class="col">
+                <label for="male">Мужской</label>
+                <input type="radio" id="male" name="sex" value="male" checked v-model="user.sex" />
+              </div>
+              <div class="col">
+                <label for="female">Женский</label>
+                <input type="radio" id="female" name="sex" value="female" v-model="user.sex"/>
+              </div>
+            </div>
+            <hr class="hr" />
+            <h3>Рост</h3>
+            <input type="number" class="input" v-model="user.height"/>см
+            <hr class="hr" />
+            <h3>Вес</h3>
+            <input type="number" class="input" v-model="user.weight"/>кг
+            <hr class="hr" />
+            <h3>Дата рождения</h3>
+            <VueDatePicker
+                v-model="user.birthday"
+                locale="ru"
+                cancelText="Отмена"
+                selectText="Выбрать"
+                placeholder="Выберите дату"
+                style="display: inline-flex; width: 200px;"/>
             <br>
 
         </div>
@@ -46,3 +65,39 @@ export default {
     }
 }
 </script>
+
+<style scoped>
+input {
+  background: #efefef;
+  border: none;
+  border-radius: 0.3rem;
+  border-bottom: 1px solid #d7d7d7;
+  padding: 0.3rem;
+  width: 100%;
+  max-width: 60vw;
+  text-align: center;
+}
+.container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-content: center;
+  align-items: center;
+}
+.hr {
+  border-bottom: 1px solid #f8f8f8;
+  width: 100%;
+  opacity: 0.2;
+}
+h3 {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+.subtext {
+  font-size: 0.8rem;
+  opacity: 0.57;
+}
+.dp__input {
+  background-color: black!important;
+}
+</style>
