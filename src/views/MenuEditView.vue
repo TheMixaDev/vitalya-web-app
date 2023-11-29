@@ -73,7 +73,7 @@
                     <Slider class="carbohydrates-slider" v-bind="sliders.carbohydrates" v-model="sliders.carbohydrates.value"></Slider>
                 </div>
             </div>
-            <h4 class="no_bottom_margin">Микронутриенты</h4>
+            <!--h4 class="no_bottom_margin">Микронутриенты</h4>
             <div class="range-slider">
                 <div class="row justify-between">
                     <div class="col-auto justify-center align-self-center">
@@ -84,7 +84,7 @@
                     </div>
                 </div><br>
                 <Slider class="minCellulose-slider" v-bind="sliders.minCellulose" v-model="sliders.minCellulose.value"></Slider>
-            </div>
+            </div-->
             <meals>
                 <h4 class="no_bottom_margin">Приемы пищи</h4>
                 <div class="container container-content range-slider" v-for="(mealtime, index) in userParams.eatings?.filter(m => !m.removed)" :key="index">
