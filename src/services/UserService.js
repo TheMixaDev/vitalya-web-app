@@ -5,7 +5,11 @@ import { FrontendService } from "./FrontendService"
 
 export const UserService = {
     authorize(cookies, telegram, success, fail) {
-        if(configuration.designMode) return success(designResponses.authorize);
+        if(configuration.designMode) {
+            cookies.set('auth', data.data.token, "1y");
+            cookies.set('tg', telegram, "1y");
+            return success(designResponses.authorize);
+        }
         NetworkService.GET(`/user/auth/telegram/${telegram}`, data => {
             cookies.set('auth', data.data.token, "1y");
             cookies.set('tg', telegram, "1y");
