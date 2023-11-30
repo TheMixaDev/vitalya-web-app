@@ -2,7 +2,7 @@
     <section>
         <div class="row header">
             <div class="col flex justify-center align-content-center align-items-center align-self-center" @click="this.$router.go(-1)">
-                <img class="arrow-left" src="assets/img/arrow-left.svg" alt="Arrow icon left" />
+                <img class="arrow-left" src="/assets/img/arrow-left.svg" alt="Arrow icon left" />
             </div>
             <div class="col">
                 <h3 class="h3" style="margin-top: 2rem;">{{ dish.name }}</h3>

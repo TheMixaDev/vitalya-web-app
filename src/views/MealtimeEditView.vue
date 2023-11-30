@@ -2,13 +2,13 @@
     <section>
         <div class="row header">
             <div class="col flex justify-center align-content-center align-items-center align-self-center" @click="goBack(false)">
-                <img class="arrow-left" src="./assets/img/arrow-left.svg" alt="Arrow icon left" />
+                <img class="arrow-left" src="/assets/img/arrow-left.svg" alt="Arrow icon left" />
             </div>
             <div class="col">
                 <h3 class="h3" style="margin-top: 2rem;">Настройки приёма пищи</h3>
             </div>
             <div class="col flex justify-center align-content-center align-items-center align-self-center" @click="saveAndQuit">
-                <img class="save-icon" src="./assets/img/save.svg" alt="Save icon" />
+                <img class="save-icon" src="/assets/img/save.svg" alt="Save icon" />
             </div>
         </div>
         <section class="content-section details">

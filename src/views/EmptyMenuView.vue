@@ -5,7 +5,7 @@
         </div>
 
         <div class="container">
-            <img class="cal-img" src="./assets/img/cal.svg" alt="Calendar icon"/>
+            <img class="cal-img" src="/assets/img/cal.svg" alt="Calendar icon"/>
             <h1 class="h1">Вы ещё не создали меню</h1>
             <p class="subtext">Нажмите на оранжевую кнопку снизу, чтобы получить меню на день</p>
         </div>

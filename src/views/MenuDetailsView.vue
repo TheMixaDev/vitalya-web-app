@@ -2,7 +2,7 @@
     <section>
         <div class="row header">
             <div class="col flex justify-center align-content-center align-items-center align-self-center" @click="this.$router.go(-1)">
-                <img class="arrow-left" src="./assets/img/arrow-left.svg" alt="Arrow icon left" />
+                <img class="arrow-left" src="/assets/img/arrow-left.svg" alt="Arrow icon left" />
             </div>
             <div class="col">
                 <h3 class="h3" style="margin-top: 2rem;">Твоё меню</h3>
@@ -23,7 +23,7 @@
                             <RouterLink to="menu_edit"><span>Изменить</span></RouterLink>
                         </div>
                         <div class="col-auto flex align-self-center justify-center align-content-center align-self-center">
-                            <img class="arrow-right" src="./assets/img/arrow-right.svg" alt="Arrow icon right" />
+                            <img class="arrow-right" src="/assets/img/arrow-right.svg" alt="Arrow icon right" />
                         </div>
                     </div>
                 </div>

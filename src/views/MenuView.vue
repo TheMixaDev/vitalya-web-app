@@ -11,7 +11,7 @@
                     <p class="small-subtext">Белки {{ Math.round(totalMicronutrients.protein) }}г, Жиры {{ Math.round(totalMicronutrients.fat) }}г, Углеводы {{ Math.round(totalMicronutrients.carbohydrates) }}г</p>
                 </div>
                 <div class="col-auto justify-center align-content-center align-self-center align-items-center">
-                    <RouterLink to="/menu_details"><img class="arrow-left" src="./assets/img/arrow-right.svg" alt="Arrow left icon" /></RouterLink>
+                    <RouterLink to="/menu_details"><img class="arrow-left" src="/assets/img/arrow-right.svg" alt="Arrow left icon" /></RouterLink>
                 </div>
             </div>
         </div>
@@ -19,15 +19,15 @@
         <div class="content-section flex-column main-container" style="position: relative; padding-bottom: 102px;" @scroll="closeDropdowns">
             <div class="container area-container2" v-for="(menuItem, index) in menu" :key="index">
                 <div class="dropdown-content" style="display: none" :id="'dropdown'+menuItem.name">
-                    <a @click="regenerateSubmenu(menuItem)" class="flex justify-between"> Перегенерировать {{ menuItem.name }} <img src="./assets/img/refresh.svg" alt="Refresh icon" /> </a>
-                    <RouterLink to="/menu_edit" class="flex justify-between">Настроить {{ menuItem.name }} <img src="./assets/img/settings.svg" alt="Settings icon" /></RouterLink>
+                    <a @click="regenerateSubmenu(menuItem)" class="flex justify-between"> Перегенерировать {{ menuItem.name }} <img src="/assets/img/refresh.svg" alt="Refresh icon" /> </a>
+                    <RouterLink to="/menu_edit" class="flex justify-between">Настроить {{ menuItem.name }} <img src="/assets/img/settings.svg" alt="Settings icon" /></RouterLink>
                 </div>
                 <div class="row container-header justify-center align-items-around align-self-center">
                     <div class="col">
                         <h3 class="meal-time">{{ menuItem.name }}</h3>
                     </div>
                     <div class="col flex justify-end">
-                        <button class="menu-button" @click="toggleDropdown($event.target, 'dropdown'+menuItem.name)"><img class="dots-img" src="./assets/img/dots.svg" alt="Dots menu icon" /></button>
+                        <button class="menu-button" @click="toggleDropdown($event.target, 'dropdown'+menuItem.name)"><img class="dots-img" src="/assets/img/dots.svg" alt="Dots menu icon" /></button>
                     </div>
                 </div>
                 <div class="container container-content">
