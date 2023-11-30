@@ -6,7 +6,7 @@ import { FrontendService } from "./FrontendService"
 export const UserService = {
     authorize(cookies, telegram, success, fail) {
         if(configuration.designMode) {
-            cookies.set('auth', data.data.token, "1y");
+            cookies.set('auth', "token", "1y");
             cookies.set('tg', telegram, "1y");
             return success(designResponses.authorize);
         }
