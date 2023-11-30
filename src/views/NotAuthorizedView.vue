@@ -5,7 +5,7 @@
         </div>
 
         <div class="container">
-            <img class="cal-img" src="/assets/img/logo.svg" alt="Icon"/>
+            <img class="cal-img" src="./assets/img/logo.svg" alt="Icon"/>
             <h1 class="h1">Не удалось авторизоваться</h1>
             <p class="subtext">Не удалось авторизовать вас в системе. Попробуйте перезапустить приложение</p>
         </div>
