@@ -195,10 +195,16 @@ export default {
             this.userParams.calories = this.sliders.calories.value;
             this.userParams.params.calories = this.sliders.calories.value;
             this.userParams.params.minProtein = this.sliders.protein.value[0];
+            if(this.sliders.protein.value[1] > this.sliders.protein.max)
+                this.sliders.protein.value[1] = this.sliders.protein.max;
             this.userParams.params.maxProtein = this.sliders.protein.value[1];
             this.userParams.params.minFat = this.sliders.fat.value[0];
+            if(this.sliders.fat.value[1] > this.sliders.fat.max)
+                this.sliders.fat.value[1] = this.sliders.fat.max;
             this.userParams.params.maxFat = this.sliders.fat.value[1];
             this.userParams.params.minCarbohydrates = this.sliders.carbohydrates.value[0];
+            if(this.sliders.carbohydrates.value[1] > this.sliders.carbohydrates.max)
+                this.sliders.carbohydrates.value[1] = this.sliders.carbohydrates.max;
             this.userParams.params.maxCarbohydrates = this.sliders.carbohydrates.value[1];
             //this.userParams.params.minCellulose = this.sliders.minCellulose.value;
             this.userParams.eatings = this.userParams.eatings.filter(e => !e.removed);
