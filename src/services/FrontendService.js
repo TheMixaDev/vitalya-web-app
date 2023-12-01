@@ -36,5 +36,13 @@ export const FrontendService = {
         if(response.data)
             callback(response.data);
         else callback(response);
+    },
+    parseMeasure(count, type) {
+        if(type.isDimensionless) return type.name;
+        let relativeCount = count % 10;
+        if(count % 1 != 0) return count+" "+type.nameFractional;
+        if(relativeCount > 1 && relativeCount < 5) return count+" "+type.nameTwoItems;
+        if((relativeCount >= 5 && (count <= 20 || relativeCount <= 10)) || relativeCount == 0) return count+" "+type.nameFiveItems;
+        return count+" "+type.name;
     }
 }

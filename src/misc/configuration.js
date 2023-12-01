@@ -1,4 +1,4 @@
 export const configuration = {
-    serverUrl: 'http://localhost:80',
-    designMode: true
+    serverUrl: 'https://api.paprika.dudosyka.ru',
+    designMode: false
 }

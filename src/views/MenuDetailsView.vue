@@ -55,11 +55,11 @@
                     <td class="quantity">{{ FrontendService.round(totalMicronutrients.carbohydrates) }}г</td>
                     <td class="goal">{{ FrontendService.round(targets.minCarbohydrates) }}г - {{ FrontendService.round(targets.maxCarbohydrates) }}г</td>
                 </tr>
-                <tr>
+                <!--tr>
                     <td class="cat cat-name">Клетчатка</td>
                     <td class="quantity">{{ FrontendService.round(totalMicronutrients.cellulose) }}г</td>
                     <td class="goal">{{ FrontendService.round(targets.minCellulose) }}г</td>
-                </tr>
+                </tr-->
             </table>
         </section>
     </section>
@@ -88,7 +88,7 @@ export default {
                 protein: 0,
                 fat: 0,
                 carbohydrates: 0,
-                cellulose: 0
+                //cellulose: 0
             },
             targets: {
                 calories: 0.0,
@@ -98,8 +98,8 @@ export default {
                 maxFat: 0.0,
                 minCarbohydrates: 0.0,
                 maxCarbohydrates: 0.0,
-                minCellulose: 0.0,
-                maxCellulose: 0.0
+                //minCellulose: 0.0,
+                //maxCellulose: 0.0
             },
             chartOptions: {
                 series: [

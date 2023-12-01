@@ -33,7 +33,7 @@
             <h4 class="h4 p-4" style="font-weight: 600; padding-top: 0!important; padding-bottom: 0!important; text-align: left!important; width: 100%;">
                 Фильтры рецептов
             </h4>
-            <div class="row justify-between w-100 p-4" style="padding-top: 0!important;">
+            <!--div class="row justify-between w-100 p-4" style="padding-top: 0!important;">
                 <div class="col-auto justify-center align-self-center" >
                     <h4 class="h4" style="margin: 0;">Предпочтения в блюдах</h4>
                 </div>
@@ -46,7 +46,7 @@
                         <option value="4">Перекус</option>
                     </select>
                 </div>
-            </div>
+            </div-->
             <!--div style="padding-top: 0!important;" class="row justify-between w-100 p-4">
                 <div class="col-auto justify-center align-self-center">
                     <h4 class="h4" style="margin: 0;">Время готовки</h4>
@@ -102,7 +102,7 @@ export default {
             eating: {
                 name: "First",
                 size: 0.8,
-                type: 0,
+                //type: 0,
                 difficulty: 0,
                 dishCount: 4
             }

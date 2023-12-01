@@ -157,14 +157,14 @@ export default {
                     format: v => `${FrontendService.round(v)}кал`,
                     colorClass: 'calories-slider'
                 },
-                minCellulose: {
+                /*minCellulose: {
                     min: 25,
                     max: 50,
                     step: 0.1,
                     value: 0,
                     format: v => `${FrontendService.round(v)}г`,
                     colorClass: 'minCellulose-slider'
-                }
+                }*/
             },
             userParams: {
                 diet: 0
@@ -173,9 +173,9 @@ export default {
     },
     methods: {
         calculateLimits() {
-            this.sliders.protein.max = FrontendService.round(this.sliders.calories.value / 4)*1;
-            this.sliders.fat.max = FrontendService.round(this.sliders.calories.value / 9)*1;
-            this.sliders.carbohydrates.max = FrontendService.round(this.sliders.calories.value / 4)*1;
+            this.sliders.protein.max = FrontendService.round(this.sliders.calories.value / 4 / 3)*1;
+            this.sliders.fat.max = FrontendService.round(this.sliders.calories.value / 9 / 3)*1;
+            this.sliders.carbohydrates.max = FrontendService.round(this.sliders.calories.value / 4 / 3)*1;
         },
         loadParams() {
             UserService.getParams(this.$cookies, data => {
@@ -185,7 +185,7 @@ export default {
                 this.sliders.protein.value = [data.params.minProtein, data.params.maxProtein];
                 this.sliders.fat.value = [data.params.minFat, data.params.maxFat];
                 this.sliders.carbohydrates.value = [data.params.minCarbohydrates, data.params.maxCarbohydrates];
-                this.sliders.minCellulose.value = data.params.minCellulose;
+                //this.sliders.minCellulose.value = data.params.minCellulose;
             }, () => {
                 FrontendService.notifyError(this.$notify, "Не удалось получить параметры пользователя, попробуйте позже");
                 this.$router.push({name: 'Root'})
@@ -200,7 +200,7 @@ export default {
             this.userParams.params.maxFat = this.sliders.fat.value[1];
             this.userParams.params.minCarbohydrates = this.sliders.carbohydrates.value[0];
             this.userParams.params.maxCarbohydrates = this.sliders.carbohydrates.value[1];
-            this.userParams.params.minCellulose = this.sliders.minCellulose.value;
+            //this.userParams.params.minCellulose = this.sliders.minCellulose.value;
             this.userParams.eatings = this.userParams.eatings.filter(e => !e.removed);
             UserService.setParams(this.$cookies, this.userParams,
                 () => FrontendService.notifySuccess(this.$notify, "Параметры сохранены"),

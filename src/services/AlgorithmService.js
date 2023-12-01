@@ -6,10 +6,10 @@ import { NetworkService } from "./NetworkService";
 export const AlgorithmService = {
     calculateMenu(cookies, success, fail) {
         if(configuration.designMode) return success(designResponses.calculateMenu);
-        NetworkService.POSTAuth(`/menu/calculate`, {}, cookies, data => FrontendService.getDataFromResponse(data, success), fail);
+        NetworkService.POSTAuth(`/menu/calculate`, {"excluded": []}, cookies, data => FrontendService.getDataFromResponse(data, success), fail);
     },
     calculateCustom(cookies, data, success, fail) {
         if(configuration.designMode) return success(designResponses.calculateCustom);
-        NetworkService.POSTAuth(`/menu/custom`, data, cookies, data => FrontendService.getDataFromResponse(data, success), fail);
+        NetworkService.POSTAuth(`/menu/calculate`, {"excluded": data.excludeDishes}, cookies, data => FrontendService.getDataFromResponse(data, success), fail);
     }
 }

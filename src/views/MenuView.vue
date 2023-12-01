@@ -70,7 +70,7 @@ export default {
                 protein: 0,
                 fat: 0,
                 carbohydrates: 0,
-                cellulose: 0
+                //cellulose: 0
             },
             chartOptions: {
                 series: [
@@ -182,21 +182,21 @@ export default {
                                 "maxFat": 2000 / 7 * 1.1 / 9,
                                 "minCarbohydrates": 2000 / 7 * 0.9 / 4,
                                 "maxCarbohydrates": 2000 / 7 * 1.1 / 4,
-                                "minCellulose": 25,
-                                "maxCellulose": 999
+                                //"minCellulose": 25,
+                                //"maxCellulose": 999
                         },
                         "eatings": [
                             {
                                 "name": "Завтрак",
                                 "size": 0.4,
-                                "type": 1,
+                                //"type": 1,
                                 "difficulty": 3,
                                 "dishCount": 2
                             },
                             {
                                 "name": "Обед",
                                 "size": 0.4,
-                                "type": 2,
+                                //"type": 2,
                                 "difficulty": 3,
                                 "dishCount": 0
                             }

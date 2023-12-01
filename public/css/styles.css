@@ -192,7 +192,11 @@ section {
 .card-body:first-child {
     z-index: 9999;
 }
-.food-photo {}
+.food-photo {
+    width: 69px;
+    height: 69px;
+    object-fit: contain;
+}
 .low-opacity {
     opacity: 57%;
     padding-top: 1.4rem;
@@ -480,7 +484,15 @@ section {
 }
 
 .food-photo-big {
+    width: 314px;
+    height: 256px;
+    object-fit: contain;
     border-radius: 10px;
+}
+.ingredient-image {
+    width: 67px;
+    height: 44px;
+    object-fit: contain;
 }
 .timing {
     text-align: right;

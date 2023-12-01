@@ -26,30 +26,27 @@
                 </div>
             </div>
             <div class="container area-container">
-                <ingridients v-if="dish.ingredients.length > 0">
+                <ingridients v-if="ingredients.length > 0">
                     <div class="row w-100">
                         <h4 style="padding: 0; margin-bottom: 0; margin-top: 0.5rem; text-align: left; width: 100%;">Ингридиенты</h4>
                         <p class="subtext-small" style="padding: 0; text-align: left!important; width: 100%;">ингредиенты на порцию {{ FrontendService.round(dish.weight) }}г </p>
                     </div>
-                    <div v-if="parsedIngredients.length == dish.ingredients.length">
-                        <div class="row justify-between w-100" v-for="(ingredient, index) in parsedIngredients" :key="index">
+                    <div>
+                        <div class="row justify-between w-100" v-for="(ingredient, index) in ingredients" :key="index">
                             <div class="col-auto">
                                 <div class="row" style="gap: 1rem;">
-                                    <!--div class="col-auto justify-center align-self-center align-items-center align-content-center photo-col" style="max-width: 174px;">
-                                        <img class="chicken" src="assets/img/food/chick.png" /> TODO add image once ingredients are properly tested
-                                    </div-->
+                                    <div class="col-auto justify-center align-self-center align-items-center align-content-center photo-col" style="max-width: 174px;">
+                                        <img class="ingredient-image" :src="ingredient.imageUrl" :alt="ingredient.name" />
+                                    </div>
                                     <div class="col-auto justify-center align-self-center align-items-center align-content-center">
                                         <h5 class="product-name">{{ ingredient.name }}</h5>
                                     </div>
                                 </div>
                             </div>
                             <div class="col-auto justify-end align-self-center align-items-end align-content-end quantity-col">
-                                <span class="quantity-item">{{ ingredient.measure }}</span>
+                                <span class="quantity-item">{{ FrontendService.parseMeasure(ingredient.measureCount, ingredient.measureType) }}</span>
                             </div>
                         </div>
-                    </div>
-                    <div class="row w-100" v-else>
-                        <h4 style="padding: 0; margin-bottom: 0; margin-top: 0.5rem; text-align: left; width: 100%;">Зарузка ингридиентов...</h4>
                     </div>
                 </ingridients>
                 <steps v-if="recipeSteps.length > 0">
@@ -57,21 +54,21 @@
                         <h4 style="padding: 0; margin-bottom: 0; text-align: left; width: 100%;">Шаги приготовления</h4>
                     </div>
                     <div class="row w-100">
-                        <ul class="ul">
-                            <li class="col-auto" v-for="(step, index) in recipeSteps" :key="step.relativeId">
-                                <span class="step">
-                                    Шаг {{ index + 1 }}
-                                </span>
-                                <p class="receipt-step">
-                                    {{ step.text }}
-                                </p>
-                            </li>
-                            <li>
-                                <span>
-                                    Приятного аппетита!
-                                </span>
-                            </li>
-                        </ul>
+                        <div class="row w-100" v-for="step in recipeSteps" :key="step.relativeId">
+                            <div>
+                                <div class="row w-100">
+                                    <img class="ingredient-image" :src="step.imageUrl" style="width: 100px;" v-if="step.imageUrl.length > 0"/>
+                                    <div style="text-align: left; max-width: calc(100% - 100px); font-size: small;">
+                                        <b class="step">
+                                            Шаг {{ step.relativeId }}
+                                        </b>
+                                        <p class="receipt-step">
+                                            {{ step.text }}
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </steps>
             </div>
@@ -81,7 +78,6 @@
 
 <script>
 import { FrontendService } from '../services/FrontendService';
-import { IngredientsService } from '../services/IngredientsService';
 import VChart from "vue-echarts";
 import { RecipeService } from '../services/RecipeService';
 
@@ -110,32 +106,6 @@ export default {
                 timeToCook: 0,
                 dietId: 1,
                 typeId: 1,
-                ingredients: [ // TODO: debugging measures, remove once ingredients are properly tested
-                    {
-                        id: 1,
-                        name: "Test 1",
-                        measureType: 1,
-                        measureCount: 2200.0
-                    },
-                    {
-                        id: 2,
-                        name: "Test 2",
-                        measureType: 1,
-                        measureCount: 90.0
-                    },
-                    {
-                        id: 3,
-                        name: "Test 3",
-                        measureType: 2,
-                        measureCount: 120.0
-                    },
-                    {
-                        id: 4,
-                        name: "Test 4",
-                        measureType: 2,
-                        measureCount: 90.0
-                    }
-                ],
             },
             chartOptions: {
                 series: [
@@ -163,7 +133,7 @@ export default {
                     }
                 ]
             },
-            parsedIngredients: [],
+            ingredients: [],
             recipeSteps: []
         }
     },
@@ -180,35 +150,11 @@ export default {
             this.chartOptions.series[0].data[2].name = `Углеводы ${Math.round(this.dish.carbohydrates / total * 100)}%`;
         },
         parseIngridients() {
-            let input = [];
-            this.dish.ingredients.forEach((ingredient) => {
-                input.push({
-                    id: ingredient.id,
-                    count: ingredient.measureCount
-                });
-            });
-            IngredientsService.measureMapping(this.$cookies, {input: input}, data => {
-                this.dish.ingredients.forEach((ingredient) => {
-                    let measureCount = ingredient.measureCount;
-                    let measureName = ingredient.measureType == 1 ? "г" : "мл";
-                    let measureData = data.output.find(m => m.id == ingredient.id);
-                    if(measureData.measureName != null)
-                        measureName = " "+measureData.measureName;
-                    else {
-                        if(measureCount > 2000) {
-                            measureName = ingredient.measureType == 1 ? "кг" : "л";
-                            measureCount = FrontendService.round(ingredient.measureCount / 1000);
-                        }
-                    }
-                    this.parsedIngredients.push({
-                        name: ingredient.name,
-                        measure: measureCount + measureName
-                    })
-                });
-            }, () => FrontendService.notifyError(this.$notify, "Не удалось получить информацию об ингредиентах, попробуйте позже"));
             RecipeService.recipe(this.$cookies, this.dish.id, data => {
-                if(data && data.length > 0 && data[0].steps.length > 0)
+                if(data && data.length > 0 && data[0].steps.length > 0) {
+                    this.ingredients = data[0].ingredients;
                     this.recipeSteps = data[0].steps;
+                }
             }, () => FrontendService.notifyError(this.$notify, "Не удалось получить информацию о шагах приготовления, попробуйте позже"))
         }
     },
