@@ -29,13 +29,13 @@
                 <ingridients v-if="ingredients.length > 0">
                     <div class="row w-100">
                         <h4 style="padding: 0; margin-bottom: 0; margin-top: 0.5rem; text-align: left; width: 100%;">Ингридиенты</h4>
-                        <p class="subtext-small" style="padding: 0; text-align: left!important; width: 100%;">ингредиенты на порцию {{ FrontendService.round(dish.weight) }}г </p>
+                        <!--p class="subtext-small" style="padding: 0; text-align: left!important; width: 100%;">ингредиенты на порцию {{ FrontendService.round(dish.weight) }}г </p-->
                     </div>
                     <div>
                         <div class="row justify-between w-100" v-for="(ingredient, index) in ingredients" :key="index">
                             <div class="col-auto">
                                 <div class="row" style="gap: 1rem;">
-                                    <div class="col-auto justify-center align-self-center align-items-center align-content-center photo-col" style="max-width: 174px;">
+                                    <div class="col-auto justify-center align-self-center align-items-center align-content-center photo-col" style="max-width: 174px;" v-if="ingredient.imageUrl.length > 0">
                                         <img class="ingredient-image" :src="ingredient.imageUrl" :alt="ingredient.name" />
                                     </div>
                                     <div class="col-auto justify-center align-self-center align-items-center align-content-center">
@@ -102,7 +102,6 @@ export default {
                 fat: 0,
                 carbohydrates: 0,
                 cellulose: 0,
-                weight: 0,
                 timeToCook: 0,
                 dietId: 1,
                 typeId: 1,

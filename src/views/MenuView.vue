@@ -37,7 +37,7 @@
                         </div>
                         <div class="col-auto text-col justify-center align-items-center align-self-center">
                             <a><h4 class="card-heading">{{ dish.name }}</h4></a>
-                            <span class="orange-text">{{ Math.round(dish.weight) }}г, {{ Math.round(dish.calories) }} кал</span>
+                            <span class="orange-text">{{ Math.round(dish.calories) }} кал</span>
                         </div>
                         <div class="col-auto"></div>
                     </div>
@@ -176,12 +176,12 @@ export default {
                         "isMacronutrientsParamsSet": true,
                         "params": {
                                 "calories": 2000,
-                                "minProtein": 2000 / 7 * 0.9 / 4,
-                                "maxProtein": 2000 / 7 * 1.1 / 4,
-                                "minFat": 2000 / 7 * 0.9 / 9,
-                                "maxFat": 2000 / 7 * 1.1 / 9,
-                                "minCarbohydrates": 2000 / 7 * 0.9 / 4,
-                                "maxCarbohydrates": 2000 / 7 * 1.1 / 4,
+                                "minProtein": 0,
+                                "maxProtein": 166.7,
+                                "minFat": 0,
+                                "maxFat": 74.1,
+                                "minCarbohydrates": 0,
+                                "maxCarbohydrates": 166.7,
                                 //"minCellulose": 25,
                                 //"maxCellulose": 999
                         },
